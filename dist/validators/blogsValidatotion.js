@@ -6,10 +6,14 @@ exports.blogsNameValidation = (0, express_validator_1.body)('name').isString().w
 exports.blogsDescriptionValidation = (0, express_validator_1.body)('description').isString().withMessage('can not be a number').isLength({ min: 1, max: 500 }).withMessage('can not be long then 500 symbols');
 exports.blogsWebsiteUrlValidation = (0, express_validator_1.body)('websiteUrl').isString().withMessage('can not be a number')
     .trim().isLength({ max: 100 }).withMessage('can not be long then 100 symbols')
-    .custom(url => {
-    const pattern = new RegExp('^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$');
-    return !!pattern.test(url);
-}).withMessage('Not valid url');
+    .custom((url) => {
+    const pattern = new RegExp("/^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/");
+    if (!pattern.test(url)) {
+        console.log(pattern.test(url));
+        throw new Error('Not a valid URL');
+    }
+    return true;
+});
 exports.middlewareValidationArray = [exports.blogsNameValidation, exports.blogsDescriptionValidation, exports.blogsWebsiteUrlValidation];
 const inputCheckErrorsMiddleware = (req, res, next) => {
     const e = (0, express_validator_1.validationResult)(req);

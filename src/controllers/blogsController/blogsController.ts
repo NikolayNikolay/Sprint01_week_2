@@ -39,12 +39,12 @@ export const deletByIdController = (req:Request , res:Response)=>{
 }
 
 export const deletAllBlogsController = (req:Request , res:Response)=>{
-   console.log(req.url)
+   console.log(req.url === SETTINGS.PATH.dellAllData)
    if (req.url === SETTINGS.PATH.dellAllData) {
       blogRepository.deleteAllBlogs()
       const isEmptyBlogs = blogRepository.getAll()
       if (isEmptyBlogs === DB.blogs) {
-         res.send(httpStatusCodes.NO_CONTENT)
+         res.status(httpStatusCodes.NO_CONTENT).send('All data is deleted')
       }
    }
 }

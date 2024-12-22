@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { body,validationResult } from "express-validator"
+import { body,validationResult, check } from "express-validator"
 
 
 
@@ -9,11 +9,16 @@ export const blogsDescriptionValidation = body('description').isString().withMes
 
 export const blogsWebsiteUrlValidation = body('websiteUrl').isString().withMessage('can not be a number')
                                           .trim().isLength({max:100}).withMessage('can not be long then 100 symbols')
-                                          .custom(url =>{
+                                          .custom((url) =>{
                                              const pattern = new RegExp(
-                                                '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$');
-                                             return !!pattern.test(url);
-                                          }).withMessage('Not valid url')
+                                                "/^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/");
+
+                                                if (!pattern.test(url)) {
+                                                   console.log(pattern.test(url))
+                                                   throw new Error('Not a valid URL');
+                                               }
+                                               return true
+                                          })
 
 
 export const middlewareValidationArray = [blogsNameValidation,blogsDescriptionValidation,blogsWebsiteUrlValidation]

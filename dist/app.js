@@ -15,8 +15,7 @@ exports.app.use((0, cors_1.default)()); // разрешить любым фро�
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);
 exports.app.delete(settings_1.SETTINGS.PATH.dellAllData, blogsController_1.deletAllBlogsController);
 exports.app.get('/', (req, res) => {
+    console.log('1212121212121212121212121');
     // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита
     res.status(200).json({ version: '1.0' });
 });
-// app.get(SETTINGS.PATH.VIDEOS, getVideosController)
-// app.use(SETTINGS.PATH.VIDEOS, videosRouter)
