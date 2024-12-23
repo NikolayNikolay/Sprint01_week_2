@@ -6,7 +6,7 @@
       PORT: process.env.PORT || 5000,
       PATH: {
          blogs:"/blogs",
-         post:"/posts",
+         posts:"/posts",
          dellAllData:"/testing/all-data",
       },
 }

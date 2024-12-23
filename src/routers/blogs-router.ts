@@ -1,7 +1,8 @@
 import { Router} from "express";
 import { createBlogController,getAllBlogController,getByIdController, updateByIdController, deletByIdController } from "../controllers/blogsController/blogsController";
 import { authMiddleware } from "../middleweares/autorisMiddleweare";
-import { inputCheckErrorsMiddleware, blogsWebsiteUrlValidation, blogsDescriptionValidation , blogsNameValidation,} from "../validators/blogsValidatotion";
+import { blogsWebsiteUrlValidation, blogsDescriptionValidation , blogsNameValidation,} from "../validators/blogsValidatotion";
+import { inputCheckErrorsMiddleware } from "../middleweares/imputCheckErrorsMiddleware";
 
 export const blogsRouter = Router()
 
