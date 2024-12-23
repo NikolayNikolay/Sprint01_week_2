@@ -10,4 +10,4 @@ exports.blogsRouter.get('/', blogsController_1.getAllBlogController);
 exports.blogsRouter.post('/', autorisMiddleweare_1.authMiddleware, blogsValidatotion_1.blogsDescriptionValidation, blogsValidatotion_1.blogsNameValidation, blogsValidatotion_1.blogsWebsiteUrlValidation, blogsValidatotion_1.inputCheckErrorsMiddleware, blogsController_1.createBlogController);
 exports.blogsRouter.get('/:id', blogsController_1.getByIdController);
 exports.blogsRouter.put('/:id', autorisMiddleweare_1.authMiddleware, blogsValidatotion_1.blogsDescriptionValidation, blogsValidatotion_1.blogsNameValidation, blogsValidatotion_1.blogsWebsiteUrlValidation, blogsValidatotion_1.inputCheckErrorsMiddleware, blogsController_1.updateByIdController);
-exports.blogsRouter.delete('/:id', blogsController_1.deletByIdController);
+exports.blogsRouter.delete('/:id', autorisMiddleweare_1.authMiddleware, blogsController_1.deletByIdController);
