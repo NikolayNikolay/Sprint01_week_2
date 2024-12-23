@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const settings_1 = require("../settings");
 const authMiddleware = (req, res, next) => {
-    const authorizationHeader = req.headers.authorization;
+    console.log('inside Authorization');
+    const authorizationHeader = req.headers['authorization'];
     if (!authorizationHeader) {
         console.log('No Authorization header');
         res.send(settings_1.httpStatusCodes.UNAUTHORIZED);
@@ -33,6 +34,5 @@ const authMiddleware = (req, res, next) => {
     //    res.send(httpStatusCodes.UNAUTHORIZED)
     //       return
     //   }
-    next();
 };
 exports.authMiddleware = authMiddleware;

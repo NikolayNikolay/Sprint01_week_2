@@ -31,9 +31,12 @@ export const updateByIdController = (req:Request , res:Response)=>{
 }
 
 export const deletByIdController = (req:Request , res:Response)=>{
-   const deletedBlog = blogRepository.deleteById(req.params.id)
-   if (!deletedBlog) {
-      res.send(httpStatusCodes.NO_CONTENT)
+   const existed = DB.blogs.find(b => b.id === req.params.id)
+   if (existed) {
+      const deletedBlog = blogRepository.deleteById(req.params.id)
+      if (!deletedBlog) {
+         res.send(httpStatusCodes.NO_CONTENT)
+      }
    }
    res.send(httpStatusCodes.NOT_FOUND)
 }

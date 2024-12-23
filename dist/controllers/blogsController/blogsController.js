@@ -31,9 +31,12 @@ const updateByIdController = (req, res) => {
 };
 exports.updateByIdController = updateByIdController;
 const deletByIdController = (req, res) => {
-    const deletedBlog = blogsRepository_1.blogRepository.deleteById(req.params.id);
-    if (!deletedBlog) {
-        res.send(settings_1.httpStatusCodes.NO_CONTENT);
+    const existed = db_1.DB.blogs.find(b => b.id === req.params.id);
+    if (existed) {
+        const deletedBlog = blogsRepository_1.blogRepository.deleteById(req.params.id);
+        if (!deletedBlog) {
+            res.send(settings_1.httpStatusCodes.NO_CONTENT);
+        }
     }
     res.send(settings_1.httpStatusCodes.NOT_FOUND);
 };

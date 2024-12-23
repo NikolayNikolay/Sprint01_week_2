@@ -13,7 +13,6 @@ app.use(cors()) // разрешить любым фронтам делать з�
 app.use(SETTINGS.PATH.blogs, blogsRouter)
 app.delete(SETTINGS.PATH.dellAllData, deletAllBlogsController)
 app.get('/', (req:Request, res:Response) => {
-      console.log('1212121212121212121212121')
       // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита
       res.status(200).json({version: '1.0'})
 })

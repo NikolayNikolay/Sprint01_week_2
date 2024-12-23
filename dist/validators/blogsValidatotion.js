@@ -4,10 +4,16 @@ exports.inputCheckErrorsMiddleware = exports.middlewareValidationArray = exports
 const express_validator_1 = require("express-validator");
 exports.blogsNameValidation = (0, express_validator_1.body)('name').isString().withMessage('can not be a number').trim().isLength({ min: 1, max: 15 }).withMessage('can not be long then 15 symbols');
 exports.blogsDescriptionValidation = (0, express_validator_1.body)('description').isString().withMessage('can not be a number').isLength({ min: 1, max: 500 }).withMessage('can not be long then 500 symbols');
-exports.blogsWebsiteUrlValidation = (0, express_validator_1.body)('websiteUrl').isString().withMessage('can not be a number')
-    .trim().isLength({ max: 100 }).withMessage('can not be long then 100 symbols')
+exports.blogsWebsiteUrlValidation = (0, express_validator_1.body)('websiteUrl')
     .custom((url) => {
-    const pattern = new RegExp("/^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/");
+    console.log(url);
+    if (url.length === 0) {
+        throw new Error('Can not be empty');
+    }
+    if (url.length > 100) {
+        throw new Error('can not be long then 100 symbols');
+    }
+    const pattern = new RegExp('^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$');
     if (!pattern.test(url)) {
         console.log(pattern.test(url));
         throw new Error('Not a valid URL');
@@ -16,6 +22,7 @@ exports.blogsWebsiteUrlValidation = (0, express_validator_1.body)('websiteUrl').
 });
 exports.middlewareValidationArray = [exports.blogsNameValidation, exports.blogsDescriptionValidation, exports.blogsWebsiteUrlValidation];
 const inputCheckErrorsMiddleware = (req, res, next) => {
+    console.log((0, express_validator_1.validationResult)(req));
     const e = (0, express_validator_1.validationResult)(req);
     const errors = e.array({ onlyFirstError: true });
     if (errors.length > 0) {

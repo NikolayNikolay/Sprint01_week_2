@@ -4,9 +4,8 @@ import { Request, Response, NextFunction } from "express";
 
 
 export const authMiddleware = (req:Request, res:Response, next:NextFunction)=>{
-
- const authorizationHeader = req.headers.authorization as string;
-
+  console.log('inside Authorization');
+ const authorizationHeader = req.headers['authorization'] as any;
     if (!authorizationHeader) {
         console.log('No Authorization header');
       res.send(httpStatusCodes.UNAUTHORIZED);
@@ -43,5 +42,4 @@ export const authMiddleware = (req:Request, res:Response, next:NextFunction)=>{
 //    res.send(httpStatusCodes.UNAUTHORIZED)
 //       return
 //   }
-   next()
 }
