@@ -32,9 +32,5 @@ exports.blogRepository = {
         db_1.DB.blogs = deletedBlog;
         const tryFindDeletedBlog = exports.blogRepository.getById(id);
         return tryFindDeletedBlog;
-    },
-    deleteAllBlogs() {
-        db_1.DB.blogs = [];
-        console.log(db_1.DB.blogs);
     }
 };

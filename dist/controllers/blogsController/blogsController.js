@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletAllBlogsController = exports.deletByIdController = exports.updateByIdController = exports.getByIdController = exports.getAllBlogController = exports.createBlogController = void 0;
+exports.deletByIdController = exports.updateByIdController = exports.getByIdController = exports.getAllBlogController = exports.createBlogController = void 0;
 const blogsRepository_1 = require("../../repository/blogsRepository");
 const settings_1 = require("../../settings");
 const db_1 = require("../../db/db");
@@ -41,14 +41,3 @@ const deletByIdController = (req, res) => {
     res.send(settings_1.httpStatusCodes.NOT_FOUND);
 };
 exports.deletByIdController = deletByIdController;
-const deletAllBlogsController = (req, res) => {
-    console.log(req.url === settings_1.SETTINGS.PATH.dellAllData);
-    if (req.url === settings_1.SETTINGS.PATH.dellAllData) {
-        blogsRepository_1.blogRepository.deleteAllBlogs();
-        const isEmptyBlogs = blogsRepository_1.blogRepository.getAll();
-        if (isEmptyBlogs === db_1.DB.blogs) {
-            res.status(settings_1.httpStatusCodes.NO_CONTENT).send('All data is deleted');
-        }
-    }
-};
-exports.deletAllBlogsController = deletAllBlogsController;

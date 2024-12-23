@@ -36,9 +36,5 @@ export const blogRepository = {
       DB.blogs = deletedBlog
       const tryFindDeletedBlog = blogRepository.getById(id)
       return tryFindDeletedBlog
-   },
-   deleteAllBlogs(){
-      DB.blogs = []
-      console.log(DB.blogs)
    }
 }
