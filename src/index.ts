@@ -2,7 +2,7 @@ import {app} from './app'
 import {SETTINGS} from './settings'
 import { runDB } from './db/mongo-db'
 import {config} from 'dotenv'
-   config()
+config()
 
 export const startServer = async () => {
     
