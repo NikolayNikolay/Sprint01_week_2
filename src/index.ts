@@ -6,7 +6,6 @@ import {config} from 'dotenv'
 
 
 export const startServer = async () => {
-    console.log(1111111111);
     
     try {
       await runDB(); // Connect to MongoDB
