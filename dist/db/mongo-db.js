@@ -22,6 +22,7 @@ let client = null;
 // export const postCollection:Collection<PostViewModelType> = db.collection(SETTINGS.PATH.POST_COLLECTION_NAME);
 const runDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log(process.env.MONGO_URL);
         client = new mongodb_1.MongoClient(process.env.MONGO_URL || 'mongodb://localhost:27017/');
         // Connect the client to the server	(optional starting in v4.7)
         yield client.connect();

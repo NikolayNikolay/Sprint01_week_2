@@ -26,6 +26,7 @@ export let postCollection: Collection<PostViewModelType>;
 
 export const runDB = async () =>{
    try {
+      console.log(process.env.MONGO_URL);
       
       client = new MongoClient(process.env.MONGO_URL || 'mongodb://localhost:27017/');
       // Connect the client to the server	(optional starting in v4.7)
