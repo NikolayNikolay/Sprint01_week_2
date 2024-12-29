@@ -4,7 +4,7 @@ exports.blogRepository = void 0;
 const db_1 = require("../db/db");
 exports.blogRepository = {
     create(input) {
-        const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString() });
+        const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), createdAt: new Date().toISOString(), isMembership: false });
         db_1.DB.blogs.push(newBlog);
         return newBlog;
     },

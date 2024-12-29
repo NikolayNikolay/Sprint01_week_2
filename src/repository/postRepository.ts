@@ -12,7 +12,8 @@ export const postRepository = {
          const newPost = {
             ...input,
             id: Date.now() + Math.random().toString(),
-            blogName: blog.name
+            blogName: blog.name,
+            createdAt: new Date().toISOString()
          }
          DB.posts.push(newPost)
          return newPost

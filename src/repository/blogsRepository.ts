@@ -7,7 +7,9 @@ export const blogRepository = {
    create (input:BlogInputModelType ):BlogViewModelType{
       const newBlog = {
          ...input,
-         id: Date.now() + Math.random().toString()
+         id: Date.now() + Math.random().toString(),
+         createdAt: new Date().toISOString(),
+         isMembership: false
       }
       DB.blogs.push(newBlog)
       return newBlog

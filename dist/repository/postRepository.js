@@ -6,7 +6,7 @@ exports.postRepository = {
     create(input) {
         const blog = db_1.DB.blogs.find(b => b.id === input.blogId);
         if (blog) {
-            const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name });
+            const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, createdAt: new Date().toISOString() });
             db_1.DB.posts.push(newPost);
             return newPost;
         }

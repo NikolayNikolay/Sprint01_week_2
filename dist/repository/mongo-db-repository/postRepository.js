@@ -17,7 +17,7 @@ exports.postRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = yield mongo_db_2.blogCollection.findOne({ 'id': input.blogId });
             if (blog) {
-                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name });
+                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, createdAt: new Date().toISOString() });
                 const result = yield mongo_db_1.postCollection.insertOne(newPost);
                 if (result.acknowledged) {
                     return newPost;
