@@ -4,8 +4,8 @@ import { BlogViewModelType } from "../types/BlogViewModel"
 import {dbType} from '../types/dbTypes'
 
 export const blogRepository = {
-   create (input:BlogInputModelType ){
-      const newBlog:BlogViewModelType = {
+   create (input:BlogInputModelType ):BlogViewModelType{
+      const newBlog = {
          ...input,
          id: Date.now() + Math.random().toString()
       }
@@ -16,14 +16,14 @@ export const blogRepository = {
       const blogs = DB.blogs
       return blogs
    },
-   getById(id:string){
+   getById(id:string):BlogViewModelType | boolean{
       const foundBlog = DB.blogs.find(b => b.id === id)
       if (!foundBlog) {
          return false
       }
       return foundBlog
    },
-   update(input:BlogInputModelType, id:string ){
+   update(input:BlogInputModelType, id:string ):boolean{
       const updatedBlog = DB.blogs.find(b => b.id === id)
       if (!updatedBlog) {
          return false

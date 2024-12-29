@@ -1,42 +1,50 @@
-import { blogRepository } from "../../repository/blogsRepository"
+// import { blogRepository } from "../../repository/blogsRepository" // file database from folder db
 import { BlogViewModelType } from "../../types/BlogViewModel"
 import { Request, Response } from "express"
 import { httpStatusCodes,SETTINGS } from "../../settings"
 import { DB } from "../../db/db"
+import { blogRepository } from "../../repository/mongo-db-repository/blogsRepository" // local or cloud database from mongoDB
 
-export const createBlogController = (req:Request , res:Response)=>{
-   const createdBlog :BlogViewModelType = blogRepository.create(req.body)
+export const createBlogController = async (req:Request , res:Response)=>{
+   const createdBlog = await blogRepository.create(req.body)
    res.status(httpStatusCodes.CREATED).send(createdBlog)
 }
 
-export const getAllBlogController = (req:Request , res:Response)=>{
-   const allBlogs = blogRepository.getAll()
+export const getAllBlogController = async (req:Request , res:Response)=>{
+   const allBlogs = await blogRepository.getAll()
    res.status(httpStatusCodes.OK).send(allBlogs)
 }
 
-export const getByIdController = (req:Request , res:Response)=>{
-   const fuondBlog = blogRepository.getById(req.params.id)
+export const getByIdController = async (req:Request , res:Response)=>{
+   const fuondBlog = await blogRepository.getById(req.params.id)
    if (!fuondBlog) {
       res.send(httpStatusCodes.NOT_FOUND)
    }
-   res.status(httpStatusCodes.OK).send(fuondBlog)
+   else {
+      res.status(httpStatusCodes.OK).send(fuondBlog)
+   }
 }
 
-export const updateByIdController = (req:Request , res:Response)=>{
-   const updetedBlog = blogRepository.update(req.body , req.params.id)
+export const updateByIdController = async (req:Request , res:Response)=>{
+   const updetedBlog = await blogRepository.update(req.body , req.params.id)
    if (!updetedBlog) {
       res.send(httpStatusCodes.NOT_FOUND)
    }
-   res.send(httpStatusCodes.NO_CONTENT)
+   else{
+      res.send(httpStatusCodes.NO_CONTENT)
+   }
 }
 
-export const deletByIdController = (req:Request , res:Response)=>{
-   const existed = DB.blogs.find(b => b.id === req.params.id)
-   if (existed) {
-      const deletedBlog = blogRepository.deleteById(req.params.id)
-      if (!deletedBlog) {
+export const deletByIdController = async (req:Request , res:Response)=>{
+   const existed = await blogRepository.getById(req.params.id)
+   if (!existed) {
+      res.send(httpStatusCodes.NOT_FOUND)
+   }
+   else {
+      const deletedBlog = await blogRepository.deleteById(req.params.id)
+      if (deletedBlog) {
          res.send(httpStatusCodes.NO_CONTENT)
+         return
       }
    }
-   res.send(httpStatusCodes.NOT_FOUND)
 }

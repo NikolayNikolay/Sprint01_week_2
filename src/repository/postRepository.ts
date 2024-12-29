@@ -6,10 +6,10 @@ import { PostViewModelType } from "../types/PostViewModel"
 
 
 export const postRepository = {
-   create (input:PostInputModelType ){
+   create (input:PostInputModelType ): PostViewModelType | boolean{
       const blog = DB.blogs.find(b => b.id === input.blogId)
       if (blog) {
-         const newPost:PostViewModelType = {
+         const newPost = {
             ...input,
             id: Date.now() + Math.random().toString(),
             blogName: blog.name
@@ -25,14 +25,14 @@ export const postRepository = {
       const posts = DB.posts
       return posts
    },
-   getById(id:string){
+   getById(id:string):PostViewModelType| boolean{
       const foundPost = DB.posts.find(b => b.id === id)
       if (!foundPost) {
          return false
       }
       return foundPost
    },
-   update(input:PostInputModelType, id:string ){
+   update(input:PostInputModelType, id:string ):boolean{
       const updatedPost = DB.posts.find(b => b.id === id)
       if (!updatedPost) {
          return false
