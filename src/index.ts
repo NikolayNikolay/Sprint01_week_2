@@ -4,7 +4,6 @@ import { runDB } from './db/mongo-db'
 import {config} from 'dotenv'
    config()
 
-
 export const startServer = async () => {
     
     try {
