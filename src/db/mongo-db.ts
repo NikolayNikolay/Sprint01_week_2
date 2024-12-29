@@ -4,7 +4,8 @@ import { BlogInputModelType } from "../types/BlogInputModel";
 import { BlogViewModelType } from "../types/BlogViewModel";
 import { PostInputModelType } from "../types/PostInputModel";
 import { PostViewModelType } from "../types/PostViewModel";
-import { dbType } from "../types/dbTypes";
+import {config} from 'dotenv'
+   config()
 
 // const { MongoClient} = require('mongodb');
 

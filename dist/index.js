@@ -13,6 +13,8 @@ exports.startServer = void 0;
 const app_1 = require("./app");
 const settings_1 = require("./settings");
 const mongo_db_1 = require("./db/mongo-db");
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(1111111111);
     try {

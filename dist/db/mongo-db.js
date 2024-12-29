@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDB = exports.postCollection = exports.blogCollection = exports.db = void 0;
 const mongodb_1 = require("mongodb");
 const settings_1 = require("../settings");
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 // const { MongoClient} = require('mongodb');
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 let client = null;
