@@ -14,7 +14,6 @@ import {config} from 'dotenv'
 let client: any = null;
 
 
-
 export let db: Db;
 export let blogCollection: Collection<BlogViewModelType>;
 export let postCollection: Collection<PostViewModelType>;
@@ -44,7 +43,7 @@ export const runDB = async () =>{
    }
    catch(e){
       console.log(e)
-        await client.close()
-        return false
+      await client.close()
+      return false
    }
 }
