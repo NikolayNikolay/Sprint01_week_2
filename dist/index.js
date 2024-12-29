@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startServer = void 0;
 const app_1 = require("./app");
 const settings_1 = require("./settings");
 const mongo_db_1 = require("./db/mongo-db");
@@ -26,7 +25,6 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error("Error starting the server:", error);
     }
 });
-exports.startServer = startServer;
 if (process.env.NODE_ENV !== "test") {
-    (0, exports.startServer)();
+    startServer();
 }

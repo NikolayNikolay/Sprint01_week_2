@@ -4,7 +4,7 @@ import { runDB } from './db/mongo-db'
 import {config} from 'dotenv'
 config()
 
-export const startServer = async () => {
+const startServer = async () => {
     
     try {
       await runDB(); // Connect to MongoDB
