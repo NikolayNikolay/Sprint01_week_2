@@ -20,9 +20,8 @@ exports.postRepository = {
                 const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, createdAt: new Date().toISOString() });
                 const result = yield mongo_db_1.postCollection.insertOne(newPost);
                 if (result.acknowledged) {
-                    return newPost;
+                    return yield mongo_db_1.postCollection.findOne({ 'id': newPost.id }, { projection: { _id: 0 } });
                 }
-                return false;
             }
             else {
                 return false;

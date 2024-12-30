@@ -5,7 +5,7 @@ import { postCollection } from "../../db/mongo-db"
 import { blogCollection } from "../../db/mongo-db"
 
 export const postRepository = {
-   async create (input:PostInputModelType ): Promise <PostViewModelType | boolean>{
+   async create (input:PostInputModelType ): Promise <PostViewModelType | any>{
       const blog = await blogCollection.findOne({'id':input.blogId})
       if (blog) {
          const newPost = {
@@ -15,10 +15,9 @@ export const postRepository = {
             createdAt: new Date().toISOString()
          }
          const result = await postCollection.insertOne(newPost)
-      if (result.acknowledged) {
-         return newPost
-      }
-      return false
+         if (result.acknowledged) {
+            return await postCollection.findOne({'id':newPost.id},{projection:{_id:0}})
+         }
       }
       else{
          return false
