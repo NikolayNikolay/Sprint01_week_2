@@ -31,12 +31,12 @@ exports.postRepository = {
     },
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return mongo_db_1.postCollection.find({}).toArray();
+            return mongo_db_1.postCollection.find({}, { projection: { _id: 0 } }).toArray();
         });
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundPost = yield mongo_db_1.postCollection.findOne({ 'id': id });
+            const foundPost = yield mongo_db_1.postCollection.findOne({ 'id': id }, { projection: { _id: 0 } });
             if (!foundPost) {
                 return false;
             }

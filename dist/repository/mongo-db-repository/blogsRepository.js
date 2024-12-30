@@ -24,13 +24,13 @@ exports.blogRepository = {
     },
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = mongo_db_1.blogCollection.find({}).toArray();
+            const blogs = mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } }).toArray();
             return blogs;
         });
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id });
+            const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id }, { projection: { _id: 0 } });
             if (!foundBlog) {
                 return false;
             }
