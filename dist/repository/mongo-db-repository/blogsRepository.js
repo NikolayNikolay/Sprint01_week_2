@@ -14,10 +14,11 @@ const mongo_db_1 = require("../../db/mongo-db");
 exports.blogRepository = {
     create(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), createdAt: new Date().toISOString(), isMembership: false });
+            const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), createdAt: new Date().toISOString(), isMembership: true });
             const result = yield mongo_db_1.blogCollection.insertOne(newBlog);
+            console.log(1111111111);
             if (result.acknowledged) {
-                return newBlog;
+                return yield mongo_db_1.blogCollection.findOne({ "id": newBlog.id }, { projection: { _id: 0 } });
             }
             return false;
         });
