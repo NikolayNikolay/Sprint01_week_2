@@ -1,5 +1,5 @@
 import {app} from './app'
-import {SETTINGS} from './settings'
+import {mongoURI, SETTINGS} from './settings'
 import { runDB } from './db/mongo-db'
 import {config} from 'dotenv'
 config()
@@ -7,7 +7,7 @@ config()
 const startServer = async () => {
     
     try {
-      await runDB(); // Connect to MongoDB
+      await runDB(mongoURI); // Connect to MongoDB
         app.listen(SETTINGS.PORT, () => {
         console.log('...server started in port ' + SETTINGS.PORT)
     })

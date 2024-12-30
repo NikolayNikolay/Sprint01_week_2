@@ -25,10 +25,10 @@ export const postRepository = {
       }
    },
    async getAll(){
-      return postCollection.find({}).toArray()
+      return postCollection.find({},{projection:{_id:0}}).toArray()
    },
    async getById(id:string): Promise<PostViewModelType| boolean>{
-      const foundPost = await postCollection.findOne({'id':id})
+      const foundPost = await postCollection.findOne({'id':id},{projection:{_id:0}})
       if (!foundPost) {
          return false
       }

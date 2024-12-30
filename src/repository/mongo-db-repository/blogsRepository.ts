@@ -17,11 +17,11 @@ export const blogRepository = {
       return false
    },
    async getAll(){
-      const blogs = blogCollection.find({}).toArray()
+      const blogs = blogCollection.find({},{projection:{_id:0}}).toArray()
       return blogs
    },
    async getById(id:string):Promise<BlogViewModelType | boolean>{
-      const foundBlog = await blogCollection.findOne({"id": id})
+      const foundBlog = await blogCollection.findOne({"id": id},{projection:{_id:0}})
       if (!foundBlog) {
          return false
       }

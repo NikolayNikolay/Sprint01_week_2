@@ -20,10 +20,10 @@ let client = null;
 // export const db: Db = client.db(SETTINGS.PATH.DATA_BASE_NAME)
 // export const blogCollection:Collection<BlogViewModelType> = db.collection(SETTINGS.PATH.BLOG_COLLECTION_NAME);
 // export const postCollection:Collection<PostViewModelType> = db.collection(SETTINGS.PATH.POST_COLLECTION_NAME);
-const runDB = () => __awaiter(void 0, void 0, void 0, function* () {
+const runDB = (urlDb) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(process.env.MONGO_URL);
-        client = new mongodb_1.MongoClient(process.env.MONGO_URL || 'mongodb://localhost:27017/');
+        console.log(urlDb);
+        client = new mongodb_1.MongoClient(urlDb);
         // Connect the client to the server	(optional starting in v4.7)
         yield client.connect();
         exports.db = client.db(settings_1.SETTINGS.PATH.DATA_BASE_NAME);

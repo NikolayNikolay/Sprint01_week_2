@@ -16,7 +16,7 @@ const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield (0, mongo_db_1.runDB)(); // Connect to MongoDB
+        yield (0, mongo_db_1.runDB)(settings_1.mongoURI); // Connect to MongoDB
         app_1.app.listen(settings_1.SETTINGS.PORT, () => {
             console.log('...server started in port ' + settings_1.SETTINGS.PORT);
         });
