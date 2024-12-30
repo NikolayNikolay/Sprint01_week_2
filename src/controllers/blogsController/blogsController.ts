@@ -7,7 +7,6 @@ import { blogRepository } from "../../repository/mongo-db-repository/blogsReposi
 
 export const createBlogController = async (req:Request , res:Response)=>{
    const createdBlog = await blogRepository.create(req.body)
-   console.log(createdBlog);
    res.status(httpStatusCodes.CREATED).send(createdBlog)
 }
 

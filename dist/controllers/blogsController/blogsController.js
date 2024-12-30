@@ -14,7 +14,6 @@ const settings_1 = require("../../settings");
 const blogsRepository_1 = require("../../repository/mongo-db-repository/blogsRepository"); // local or cloud database from mongoDB
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const createdBlog = yield blogsRepository_1.blogRepository.create(req.body);
-    console.log(createdBlog);
     res.status(settings_1.httpStatusCodes.CREATED).send(createdBlog);
 });
 exports.createBlogController = createBlogController;
