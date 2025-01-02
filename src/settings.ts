@@ -8,13 +8,14 @@
          blogs:"/blogs",
          posts:"/posts",
          dellAllData:"/testing/all-data",
+         postsForBlog:"/:id/posts",
          DATA_BASE_NAME:'Blogers_Platform',
          BLOG_COLLECTION_NAME:"blogs",
          POST_COLLECTION_NAME:"post"
       },
 }
 
-export const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
+export const mongoURI ='mongodb://localhost:27017/'// process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
 
 
 export const httpStatusCodes = {

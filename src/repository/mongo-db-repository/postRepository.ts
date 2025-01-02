@@ -1,27 +1,14 @@
 import { PostInputModelType } from "../../types/PostInputModel"
 import { PostViewModelType } from "../../types/PostViewModel"
-import { BlogViewModelType } from "../../types/BlogViewModel"
 import { postCollection } from "../../db/mongo-db"
-import { blogCollection } from "../../db/mongo-db"
 
 export const postRepository = {
-   async create (input:PostInputModelType ): Promise <PostViewModelType | any>{
-      const blog = await blogCollection.findOne({'id':input.blogId})
-      if (blog) {
-         const newPost = {
-            ...input,
-            id: Date.now() + Math.random().toString(),
-            blogName: blog.name,
-            createdAt: new Date().toISOString()
-         }
+   async create (newPost:PostViewModelType ): Promise <PostViewModelType | any>{
          const result = await postCollection.insertOne(newPost)
          if (result.acknowledged) {
             return await postCollection.findOne({'id':newPost.id},{projection:{_id:0}})
          }
-      }
-      else{
          return false
-      }
    },
    async getAll(){
       return postCollection.find({},{projection:{_id:0}}).toArray()
@@ -38,11 +25,18 @@ export const postRepository = {
       if (!existedPost) {
          return false
       }
-      await postCollection.updateOne({"id": id},{$set : {...input}})
-      return true
+      const result = await postCollection.updateOne({"id": id},{$set : {...input}})
+      return result.acknowledged
    },
    async deleteById(id:string){
       const deletedPost = await postCollection.deleteOne({"id": id})
       return deletedPost.deletedCount === 1
+   },
+   async totalCountPostsforBlog(params:any){
+      const filter:any = {}
+      if (params) {
+         filter.blogId = params
+      }
+      return await postCollection.countDocuments(filter)
    }
 }

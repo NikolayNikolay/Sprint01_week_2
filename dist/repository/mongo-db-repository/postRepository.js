@@ -11,21 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRepository = void 0;
 const mongo_db_1 = require("../../db/mongo-db");
-const mongo_db_2 = require("../../db/mongo-db");
 exports.postRepository = {
-    create(input) {
+    create(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield mongo_db_2.blogCollection.findOne({ 'id': input.blogId });
-            if (blog) {
-                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, createdAt: new Date().toISOString() });
-                const result = yield mongo_db_1.postCollection.insertOne(newPost);
-                if (result.acknowledged) {
-                    return yield mongo_db_1.postCollection.findOne({ 'id': newPost.id }, { projection: { _id: 0 } });
-                }
+            const result = yield mongo_db_1.postCollection.insertOne(newPost);
+            if (result.acknowledged) {
+                return yield mongo_db_1.postCollection.findOne({ 'id': newPost.id }, { projection: { _id: 0 } });
             }
-            else {
-                return false;
-            }
+            return false;
         });
     },
     getAll() {
@@ -48,14 +41,23 @@ exports.postRepository = {
             if (!existedPost) {
                 return false;
             }
-            yield mongo_db_1.postCollection.updateOne({ "id": id }, { $set: Object.assign({}, input) });
-            return true;
+            const result = yield mongo_db_1.postCollection.updateOne({ "id": id }, { $set: Object.assign({}, input) });
+            return result.acknowledged;
         });
     },
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const deletedPost = yield mongo_db_1.postCollection.deleteOne({ "id": id });
             return deletedPost.deletedCount === 1;
+        });
+    },
+    totalCountPostsforBlog(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filter = {};
+            if (params) {
+                filter.blogId = params;
+            }
+            return yield mongo_db_1.postCollection.countDocuments(filter);
         });
     }
 };

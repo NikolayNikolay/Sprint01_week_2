@@ -1,23 +1,21 @@
 import { Request, Response } from "express"
 import { httpStatusCodes } from "../../settings"
-import { PostViewModelType } from "../../types/PostViewModel"
-import { PostInputModelType } from "../../types/PostInputModel"
-// import { postRepository } from "../../repository/postRepository" // file database from folder db
-import { DB } from "../../db/db"
-import { postRepository } from "../../repository/mongo-db-repository/postRepository"  // local or cloud database from mongoDB
-import { log } from "console"
+import { postsService } from "../../domain/postsService"
 
 export const postsController ={
    async createPost (req:Request , res:Response){
-      const createdPost = await postRepository.create(req.body)
+      const createdPost = await postsService.create(req.body)
+      if (!createdPost) {
+         res.send(httpStatusCodes.BAD_REQUEST)
+      }
       res.status(httpStatusCodes.CREATED).send(createdPost)
    },
    async getAllPosts (req:Request , res:Response){
-      const allPosts = await  postRepository.getAll()
+      const allPosts = await  postsService.getAll()
       res.status(httpStatusCodes.OK).send(allPosts)
    },
    async getPostById (req:Request , res:Response){
-      const fuondPost = await postRepository.getById(req.params.id)
+      const fuondPost = await postsService.getById(req.params.id)
       if (!fuondPost) {
       console.log('getbyid1');
          res.send(httpStatusCodes.NOT_FOUND)
@@ -29,7 +27,7 @@ export const postsController ={
       }
    },
    async updatePostById (req:Request , res:Response){
-      const updetedPost = await postRepository.update(req.body , req.params.id)
+      const updetedPost = await postsService.update(req.body , req.params.id)
       if (!updetedPost) {
          res.send(httpStatusCodes.NOT_FOUND)
       }
@@ -38,12 +36,12 @@ export const postsController ={
       }
    },
    async deletPostById (req:Request , res:Response){
-      const existed = await postRepository.getById(req.params.id)
+      const existed = await postsService.getById(req.params.id)
       if (!existed) {
          res.send(httpStatusCodes.NOT_FOUND)
       }
       else{
-         const deletedPost = await postRepository.deleteById(req.params.id)
+         const deletedPost = await postsService.deleteById(req.params.id)
          if (deletedPost) {
             res.send(httpStatusCodes.NO_CONTENT)
             return

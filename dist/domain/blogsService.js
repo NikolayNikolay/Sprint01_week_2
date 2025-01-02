@@ -9,43 +9,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogRepository = void 0;
-const mongo_db_1 = require("../../db/mongo-db");
-exports.blogRepository = {
-    create(newBlog) {
+exports.blogsService = void 0;
+const blogsRepository_1 = require("../repository/mongo-db-repository/blogsRepository");
+exports.blogsService = {
+    create(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield mongo_db_1.blogCollection.insertOne(newBlog);
+            const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), createdAt: new Date().toISOString(), isMembership: false });
+            const result = yield blogsRepository_1.blogRepository.create(newBlog);
+            if (result.acknowledged) {
+                return blogsRepository_1.blogRepository.getById(newBlog.id);
+            }
+            return false;
         });
     },
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } }).toArray();
-            return blogs;
+            return yield blogsRepository_1.blogRepository.getAll();
         });
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id }, { projection: { _id: 0 } });
-            if (!foundBlog) {
-                return false;
-            }
-            return foundBlog;
+            return yield blogsRepository_1.blogRepository.getById(id);
         });
     },
     update(input, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existedBlog = yield mongo_db_1.blogCollection.findOne({ "id": id });
-            if (!existedBlog) {
-                return false;
-            }
-            yield mongo_db_1.blogCollection.updateOne({ "id": id }, { $set: Object.assign({}, input) });
-            return true;
+            return blogsRepository_1.blogRepository.update(input, id);
         });
     },
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedBlog = yield mongo_db_1.blogCollection.deleteOne({ "id": id });
-            return deletedBlog.deletedCount === 1;
+            return blogsRepository_1.blogRepository.deleteById(id);
         });
     }
 };

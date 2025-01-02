@@ -11,23 +11,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsController = void 0;
 const settings_1 = require("../../settings");
-const postRepository_1 = require("../../repository/mongo-db-repository/postRepository"); // local or cloud database from mongoDB
+const postsService_1 = require("../../domain/postsService");
 exports.postsController = {
     createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdPost = yield postRepository_1.postRepository.create(req.body);
+            const createdPost = yield postsService_1.postsService.create(req.body);
+            if (!createdPost) {
+                res.send(settings_1.httpStatusCodes.BAD_REQUEST);
+            }
             res.status(settings_1.httpStatusCodes.CREATED).send(createdPost);
         });
     },
     getAllPosts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const allPosts = yield postRepository_1.postRepository.getAll();
+            const allPosts = yield postsService_1.postsService.getAll();
             res.status(settings_1.httpStatusCodes.OK).send(allPosts);
         });
     },
     getPostById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const fuondPost = yield postRepository_1.postRepository.getById(req.params.id);
+            const fuondPost = yield postsService_1.postsService.getById(req.params.id);
             if (!fuondPost) {
                 console.log('getbyid1');
                 res.send(settings_1.httpStatusCodes.NOT_FOUND);
@@ -40,7 +43,7 @@ exports.postsController = {
     },
     updatePostById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updetedPost = yield postRepository_1.postRepository.update(req.body, req.params.id);
+            const updetedPost = yield postsService_1.postsService.update(req.body, req.params.id);
             if (!updetedPost) {
                 res.send(settings_1.httpStatusCodes.NOT_FOUND);
             }
@@ -51,12 +54,12 @@ exports.postsController = {
     },
     deletPostById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existed = yield postRepository_1.postRepository.getById(req.params.id);
+            const existed = yield postsService_1.postsService.getById(req.params.id);
             if (!existed) {
                 res.send(settings_1.httpStatusCodes.NOT_FOUND);
             }
             else {
-                const deletedPost = yield postRepository_1.postRepository.deleteById(req.params.id);
+                const deletedPost = yield postsService_1.postsService.deleteById(req.params.id);
                 if (deletedPost) {
                     res.send(settings_1.httpStatusCodes.NO_CONTENT);
                     return;

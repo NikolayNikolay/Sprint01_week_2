@@ -1,8 +1,6 @@
 import { Collection, Db , MongoClient } from "mongodb";
-import { mongoURI, SETTINGS } from "../settings";
-import { BlogInputModelType } from "../types/BlogInputModel";
+import { SETTINGS } from "../settings";
 import { BlogViewModelType } from "../types/BlogViewModel";
-import { PostInputModelType } from "../types/PostInputModel";
 import { PostViewModelType } from "../types/PostViewModel";
 import {config} from 'dotenv'
    config()

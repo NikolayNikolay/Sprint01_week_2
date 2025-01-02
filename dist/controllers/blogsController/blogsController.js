@@ -11,19 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletByIdController = exports.updateByIdController = exports.getByIdController = exports.getAllBlogController = exports.createBlogController = void 0;
 const settings_1 = require("../../settings");
-const blogsRepository_1 = require("../../repository/mongo-db-repository/blogsRepository"); // local or cloud database from mongoDB
+const blogsService_1 = require("../../domain/blogsService");
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const createdBlog = yield blogsRepository_1.blogRepository.create(req.body);
+    const createdBlog = yield blogsService_1.blogsService.create(req.body);
     res.status(settings_1.httpStatusCodes.CREATED).send(createdBlog);
 });
 exports.createBlogController = createBlogController;
 const getAllBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const allBlogs = yield blogsRepository_1.blogRepository.getAll();
+    const allBlogs = yield blogsService_1.blogsService.getAll();
     res.status(settings_1.httpStatusCodes.OK).send(allBlogs);
 });
 exports.getAllBlogController = getAllBlogController;
 const getByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const fuondBlog = yield blogsRepository_1.blogRepository.getById(req.params.id);
+    const fuondBlog = yield blogsService_1.blogsService.getById(req.params.id);
     if (!fuondBlog) {
         res.send(settings_1.httpStatusCodes.NOT_FOUND);
     }
@@ -33,7 +33,7 @@ const getByIdController = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getByIdController = getByIdController;
 const updateByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updetedBlog = yield blogsRepository_1.blogRepository.update(req.body, req.params.id);
+    const updetedBlog = yield blogsService_1.blogsService.update(req.body, req.params.id);
     if (!updetedBlog) {
         res.send(settings_1.httpStatusCodes.NOT_FOUND);
     }
@@ -43,12 +43,12 @@ const updateByIdController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.updateByIdController = updateByIdController;
 const deletByIdController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const existed = yield blogsRepository_1.blogRepository.getById(req.params.id);
+    const existed = yield blogsService_1.blogsService.getById(req.params.id);
     if (!existed) {
         res.send(settings_1.httpStatusCodes.NOT_FOUND);
     }
     else {
-        const deletedBlog = yield blogsRepository_1.blogRepository.deleteById(req.params.id);
+        const deletedBlog = yield blogsService_1.blogsService.deleteById(req.params.id);
         if (deletedBlog) {
             res.send(settings_1.httpStatusCodes.NO_CONTENT);
             return;

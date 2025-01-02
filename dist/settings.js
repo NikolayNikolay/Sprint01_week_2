@@ -10,12 +10,13 @@ exports.SETTINGS = {
         blogs: "/blogs",
         posts: "/posts",
         dellAllData: "/testing/all-data",
+        postsForBlog: "/:id/posts",
         DATA_BASE_NAME: 'Blogers_Platform',
         BLOG_COLLECTION_NAME: "blogs",
         POST_COLLECTION_NAME: "post"
     },
 };
-exports.mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/';
+exports.mongoURI = 'mongodb://localhost:27017/'; // process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
 exports.httpStatusCodes = {
     OK: 200,
     CREATED: 201,

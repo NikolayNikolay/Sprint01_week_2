@@ -3,19 +3,8 @@ import { BlogViewModelType } from "../../types/BlogViewModel"
 import { blogCollection } from "../../db/mongo-db"
 
 export const blogRepository = {
-   async create (input:BlogInputModelType ):Promise<BlogViewModelType | any >{
-      const newBlog = {
-         ...input,
-         id: Date.now() + Math.random().toString(),
-         createdAt: new Date().toISOString(),
-         isMembership: false
-      }
-      const result = await blogCollection.insertOne(newBlog)
-      
-      if (result.acknowledged) {
-         return await blogCollection.findOne({"id": newBlog.id},{projection:{_id:0}})
-      }
-      return false
+   async create (newBlog:BlogViewModelType):Promise<BlogViewModelType | any >{
+     return await blogCollection.insertOne(newBlog)
    },
    async getAll(){
       const blogs = blogCollection.find({},{projection:{_id:0}}).toArray()
