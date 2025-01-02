@@ -1,6 +1,8 @@
 import { PostInputModelType } from "../../types/PostInputModel"
 import { PostViewModelType } from "../../types/PostViewModel"
 import { postCollection } from "../../db/mongo-db"
+import { QueryParams } from "../../types/PaginationsBlogsPostsType"
+import { SortDirections } from "../../enums/SortDirections.enum"
 
 export const postRepository = {
    async create (newPost:PostViewModelType ): Promise <PostViewModelType | any>{
@@ -10,8 +12,10 @@ export const postRepository = {
          }
          return false
    },
-   async getAll(){
-      return postCollection.find({},{projection:{_id:0}}).toArray()
+   async getAll(paginations:QueryParams){
+      return postCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
+      .skip((paginations.pageNumber - 1) * paginations.pageSize)
+      .limit(paginations.pageSize).toArray()
    },
    async getById(id:string): Promise<PostViewModelType| boolean>{
       const foundPost = await postCollection.findOne({'id':id},{projection:{_id:0}})
@@ -32,7 +36,7 @@ export const postRepository = {
       const deletedPost = await postCollection.deleteOne({"id": id})
       return deletedPost.deletedCount === 1
    },
-   async totalCountPostsforBlog(params:any){
+   async totalCountPostsforBlog(params?:any){
       const filter:any = {}
       if (params) {
          filter.blogId = params

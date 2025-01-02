@@ -8,5 +8,5 @@ const postsController_1 = require("../controllers/postConrtoller/postsController
 const blog_post_controller_1 = require("../controllers/blog-post-Controller/blog-post-controller");
 const express_1 = require("express");
 exports.blogPostRouter = (0, express_1.Router)();
-exports.blogPostRouter.post('/:id/posts', autorisMiddleweare_1.authMiddleware, postsValidations_1.postBlogIdValidation, postsValidations_1.postTitleValidation, postsValidations_1.postShortDescriptionValidation, postsValidations_1.postContentValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, postsController_1.postsController.createPost);
+exports.blogPostRouter.post('/:id/posts', autorisMiddleweare_1.authMiddleware, postsValidations_1.postTitleValidation, postsValidations_1.postShortDescriptionValidation, postsValidations_1.postContentValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, postsController_1.postsController.createPost);
 exports.blogPostRouter.get('/:id/posts', blog_post_controller_1.blogPostsController.getAllPostsForBlog);

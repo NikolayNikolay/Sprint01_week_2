@@ -7,5 +7,5 @@ import { Request, Response, Router } from "express"
 
 export const blogPostRouter = Router()
 
-blogPostRouter.post('/:id/posts',authMiddleware,postBlogIdValidation,postTitleValidation,postShortDescriptionValidation,postContentValidation,inputCheckErrorsMiddleware, postsController.createPost )
+blogPostRouter.post('/:id/posts',authMiddleware,postTitleValidation,postShortDescriptionValidation,postContentValidation,inputCheckErrorsMiddleware, postsController.createPost )
 blogPostRouter.get('/:id/posts', blogPostsController.getAllPostsForBlog)

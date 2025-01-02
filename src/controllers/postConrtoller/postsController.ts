@@ -4,25 +4,22 @@ import { postsService } from "../../domain/postsService"
 
 export const postsController ={
    async createPost (req:Request , res:Response){
-      const createdPost = await postsService.create(req.body)
+      const createdPost = await postsService.create(req.body,req.params.id)
       if (!createdPost) {
          res.send(httpStatusCodes.BAD_REQUEST)
       }
       res.status(httpStatusCodes.CREATED).send(createdPost)
    },
-   async getAllPosts (req:Request , res:Response){
-      const allPosts = await  postsService.getAll()
+   async getAllPosts (req:Request | any, res:Response){
+      const allPosts = await  postsService.getAll(req.query)
       res.status(httpStatusCodes.OK).send(allPosts)
    },
    async getPostById (req:Request , res:Response){
       const fuondPost = await postsService.getById(req.params.id)
       if (!fuondPost) {
-      console.log('getbyid1');
          res.send(httpStatusCodes.NOT_FOUND)
       }
       else{
-      console.log('getbyid2');
-      
       res.status(httpStatusCodes.OK).send(fuondPost)
       }
    },

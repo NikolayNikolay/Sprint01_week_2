@@ -8,7 +8,7 @@ export type PaginationBlogsType = {
    page: number,
    pageSize: number,
    totalCount: number,
-   items?:[ BlogViewModelType]
+   items?:BlogViewModelType[]
 }
 
 export type PaginationQueryPostsType = { 

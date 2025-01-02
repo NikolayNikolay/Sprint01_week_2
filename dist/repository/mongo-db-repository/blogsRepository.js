@@ -17,10 +17,11 @@ exports.blogRepository = {
             return yield mongo_db_1.blogCollection.insertOne(newBlog);
         });
     },
-    getAll() {
+    getAll(paginations) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } }).toArray();
-            return blogs;
+            return mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } }).sort(paginations.sortBy, paginations.sortDirection)
+                .skip((paginations.pageNumber - 1) * paginations.pageSize)
+                .limit(paginations.pageSize).toArray();
         });
     },
     getById(id) {
@@ -46,6 +47,15 @@ exports.blogRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const deletedBlog = yield mongo_db_1.blogCollection.deleteOne({ "id": id });
             return deletedBlog.deletedCount === 1;
+        });
+    },
+    totalBlogs(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filter = {};
+            if (params) {
+                filter.blogId = params;
+            }
+            return yield mongo_db_1.blogCollection.countDocuments(filter);
         });
     }
 };

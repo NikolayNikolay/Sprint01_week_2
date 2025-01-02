@@ -12,23 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogPostsService = void 0;
 const blog_post_repository_1 = require("../repository/mongo-db-repository/blog-post-repository");
 const postRepository_1 = require("../repository/mongo-db-repository/postRepository");
-const SortDirections_enum_1 = require("../enums/SortDirections.enum");
+const queryParamsForBlogPosts_1 = require("../helpers/queryParamsForBlogPosts");
 exports.blogPostsService = {
     getAllPostsForBlog(blogId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const totalCount = yield postRepository_1.postRepository.totalCountPostsforBlog(blogId);
             // create paginations params for serch posts of blog
-            const postsPaginationForBlog = {
-                pageNumber: queryParams.pageNumber ? +queryParams.pageNumber : 1,
-                pageSize: queryParams.pageSize !== undefined ? +queryParams.pageSize : 10,
-                sortBy: queryParams.sortBy ? queryParams.sortBy : 'createdAt',
-                sortDirection: SortDirections_enum_1.sortDirections.includes(queryParams.sortDirection) ? queryParams.sortDirection : 'desc'
-            };
-            const getItems = yield blog_post_repository_1.blogPostsRepository.getAllPostsForBlog(blogId, postsPaginationForBlog);
+            const PaginationParams = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
+            const getItems = yield blog_post_repository_1.blogPostsRepository.getAllPostsForBlog(blogId, PaginationParams);
             return {
-                pagesCount: Math.ceil(totalCount / postsPaginationForBlog.pageSize),
-                page: postsPaginationForBlog.pageNumber,
-                pageSize: postsPaginationForBlog.pageSize,
+                pagesCount: Math.ceil(totalCount / PaginationParams.pageSize),
+                page: PaginationParams.pageNumber,
+                pageSize: PaginationParams.pageSize,
                 totalCount,
                 items: getItems
             };

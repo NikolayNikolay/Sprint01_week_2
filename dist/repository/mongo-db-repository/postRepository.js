@@ -21,9 +21,11 @@ exports.postRepository = {
             return false;
         });
     },
-    getAll() {
+    getAll(paginations) {
         return __awaiter(this, void 0, void 0, function* () {
-            return mongo_db_1.postCollection.find({}, { projection: { _id: 0 } }).toArray();
+            return mongo_db_1.postCollection.find({}, { projection: { _id: 0 } }).sort(paginations.sortBy, paginations.sortDirection)
+                .skip((paginations.pageNumber - 1) * paginations.pageSize)
+                .limit(paginations.pageSize).toArray();
         });
     },
     getById(id) {

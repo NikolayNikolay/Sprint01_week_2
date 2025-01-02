@@ -10,8 +10,8 @@ export const createBlogController = async (req:Request , res:Response)=>{
    res.status(httpStatusCodes.CREATED).send(createdBlog)
 }
 
-export const getAllBlogController = async (req:Request , res:Response)=>{
-   const allBlogs = await blogsService.getAll()
+export const getAllBlogController = async (req:Request | any , res:Response)=>{
+   const allBlogs = await blogsService.getAll(req.query) 
    res.status(httpStatusCodes.OK).send(allBlogs)
 }
 

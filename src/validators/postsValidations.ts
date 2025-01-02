@@ -10,7 +10,7 @@ export const postShortDescriptionValidation = body('shortDescription').isString(
 
 export const postContentValidation = body('content').isString().withMessage('not sting').trim().isLength({min:1,max:1000}).withMessage('too sortly or more then 1000 mathes')
 
-export const postBlogIdValidation = body('blogId').isString().withMessage('not sting').custom(async (id)=>{
+export const postBlogIdValidation = body('blogId').isString().withMessage('not string').custom(async (id)=>{
    const fuondBlog = await blogRepository.getById(id)
    if (!fuondBlog) {
       throw new Error('Blog dose not exist')

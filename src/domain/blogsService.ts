@@ -1,6 +1,8 @@
 import { BlogInputModelType } from "../types/BlogInputModel"
 import { BlogViewModelType } from "../types/BlogViewModel"
 import { blogRepository } from "../repository/mongo-db-repository/blogsRepository"
+import { PaginationBlogsType, QueryParams } from "../types/PaginationsBlogsPostsType"
+import { PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts"
 
 export const blogsService = {
    async create (input:BlogInputModelType ):Promise<BlogViewModelType | any >{
@@ -16,8 +18,18 @@ export const blogsService = {
       }
       return false
    },
-   async getAll(){
-      return await blogRepository.getAll()
+   async getAll(queryParams: QueryParams):Promise<PaginationBlogsType> {
+      const totalCount = await blogRepository.totalBlogs()
+      const paginationForBlogs = PaginationForBlogsPosts(queryParams)
+      const blogs = await blogRepository.getAll(paginationForBlogs)
+      return {
+         pagesCount: Math.ceil(totalCount / paginationForBlogs.pageSize),
+         page: paginationForBlogs.pageNumber,
+         pageSize:paginationForBlogs.pageSize ,
+         totalCount: totalCount,
+         items: blogs
+      }
+
    },
    async getById(id:string):Promise<BlogViewModelType | boolean>{
       return await blogRepository.getById(id)

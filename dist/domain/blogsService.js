@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const blogsRepository_1 = require("../repository/mongo-db-repository/blogsRepository");
+const queryParamsForBlogPosts_1 = require("../helpers/queryParamsForBlogPosts");
 exports.blogsService = {
     create(input) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -22,9 +23,18 @@ exports.blogsService = {
             return false;
         });
     },
-    getAll() {
+    getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blogsRepository_1.blogRepository.getAll();
+            const totalCount = yield blogsRepository_1.blogRepository.totalBlogs();
+            const paginationForBlogs = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
+            const blogs = yield blogsRepository_1.blogRepository.getAll(paginationForBlogs);
+            return {
+                pagesCount: Math.ceil(totalCount / paginationForBlogs.pageSize),
+                page: paginationForBlogs.pageNumber,
+                pageSize: paginationForBlogs.pageSize,
+                totalCount: totalCount,
+                items: blogs
+            };
         });
     },
     getById(id) {

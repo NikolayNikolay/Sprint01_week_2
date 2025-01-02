@@ -12,12 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsService = void 0;
 const postRepository_1 = require("../repository/mongo-db-repository/postRepository");
 const blogsRepository_1 = require("../repository/mongo-db-repository/blogsRepository");
+const queryParamsForBlogPosts_1 = require("../helpers/queryParamsForBlogPosts");
 exports.postsService = {
-    create(input) {
+    create(input, idBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogsRepository_1.blogRepository.getById(input.blogId);
+            const checkdId = input.blogId || idBlog;
+            const blog = yield blogsRepository_1.blogRepository.getById(checkdId);
             if (blog) {
-                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, createdAt: new Date().toISOString() });
+                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, blogId: idBlog || input.blogId, createdAt: new Date().toISOString() });
+                console.log(newPost);
                 return yield postRepository_1.postRepository.create(newPost);
             }
             else {
@@ -25,9 +28,18 @@ exports.postsService = {
             }
         });
     },
-    getAll() {
+    getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            return postRepository_1.postRepository.getAll();
+            const totalCount = yield postRepository_1.postRepository.totalCountPostsforBlog();
+            const paginationForBlogsPosts = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
+            const posts = yield postRepository_1.postRepository.getAll(paginationForBlogsPosts);
+            return {
+                pagesCount: Math.ceil(totalCount / paginationForBlogsPosts.pageSize),
+                page: paginationForBlogsPosts.pageNumber,
+                pageSize: paginationForBlogsPosts.pageSize,
+                totalCount: totalCount,
+                items: posts
+            };
         });
     },
     getById(id) {

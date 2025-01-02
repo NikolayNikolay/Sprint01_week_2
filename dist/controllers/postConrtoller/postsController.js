@@ -15,7 +15,7 @@ const postsService_1 = require("../../domain/postsService");
 exports.postsController = {
     createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdPost = yield postsService_1.postsService.create(req.body);
+            const createdPost = yield postsService_1.postsService.create(req.body, req.params.id);
             if (!createdPost) {
                 res.send(settings_1.httpStatusCodes.BAD_REQUEST);
             }
@@ -24,7 +24,7 @@ exports.postsController = {
     },
     getAllPosts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const allPosts = yield postsService_1.postsService.getAll();
+            const allPosts = yield postsService_1.postsService.getAll(req.query);
             res.status(settings_1.httpStatusCodes.OK).send(allPosts);
         });
     },
@@ -32,11 +32,9 @@ exports.postsController = {
         return __awaiter(this, void 0, void 0, function* () {
             const fuondPost = yield postsService_1.postsService.getById(req.params.id);
             if (!fuondPost) {
-                console.log('getbyid1');
                 res.send(settings_1.httpStatusCodes.NOT_FOUND);
             }
             else {
-                console.log('getbyid2');
                 res.status(settings_1.httpStatusCodes.OK).send(fuondPost);
             }
         });

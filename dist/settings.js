@@ -16,7 +16,7 @@ exports.SETTINGS = {
         POST_COLLECTION_NAME: "post"
     },
 };
-exports.mongoURI = 'mongodb://localhost:27017/'; // process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
+exports.mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/';
 exports.httpStatusCodes = {
     OK: 200,
     CREATED: 201,
