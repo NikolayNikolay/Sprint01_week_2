@@ -15,7 +15,7 @@
       },
 }
 
-export const mongoURI ='mongodb://localhost:27017/'// process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
+export const mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/'; 
 
 
 export const httpStatusCodes = {
