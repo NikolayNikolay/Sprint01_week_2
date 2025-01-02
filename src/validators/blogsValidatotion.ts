@@ -1,4 +1,4 @@
-import { body } from "express-validator"
+import { body,param } from "express-validator"
 
 
 
@@ -23,6 +23,8 @@ export const blogsWebsiteUrlValidation = body('websiteUrl')
                                                 }
                                              return true
                                           })
+export const blogPostsUriParamsId = param('id').isNumeric().withMessage('Must be valid id')
+
 
 export const middlewareValidationArray = [blogsNameValidation,blogsDescriptionValidation,blogsWebsiteUrlValidation]
 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.middlewareValidationArray = exports.blogsWebsiteUrlValidation = exports.blogsDescriptionValidation = exports.blogsNameValidation = void 0;
+exports.middlewareValidationArray = exports.blogPostsUriParamsId = exports.blogsWebsiteUrlValidation = exports.blogsDescriptionValidation = exports.blogsNameValidation = void 0;
 const express_validator_1 = require("express-validator");
 exports.blogsNameValidation = (0, express_validator_1.body)('name').isString().withMessage('can not be a number').trim().isLength({ min: 1, max: 15 }).withMessage('can not be long then 15 symbols');
 exports.blogsDescriptionValidation = (0, express_validator_1.body)('description').isString().withMessage('can not be a number').isLength({ min: 1, max: 500 }).withMessage('can not be long then 500 symbols');
@@ -20,4 +20,5 @@ exports.blogsWebsiteUrlValidation = (0, express_validator_1.body)('websiteUrl')
     }
     return true;
 });
+exports.blogPostsUriParamsId = (0, express_validator_1.param)('id').isNumeric().withMessage('Must be valid id');
 exports.middlewareValidationArray = [exports.blogsNameValidation, exports.blogsDescriptionValidation, exports.blogsWebsiteUrlValidation];
