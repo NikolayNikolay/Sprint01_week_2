@@ -24,4 +24,5 @@ export type QueryParams = {
    pageSize: number,
    sortBy: string ,
    sortDirection: string,
+   searchNameTerm?: string
 }

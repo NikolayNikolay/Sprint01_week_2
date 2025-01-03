@@ -7,7 +7,8 @@ const PaginationForBlogsPosts = (queryParams) => {
         pageNumber: queryParams.pageNumber ? +queryParams.pageNumber : 1,
         pageSize: queryParams.pageSize !== undefined ? +queryParams.pageSize : 10,
         sortBy: queryParams.sortBy ? queryParams.sortBy : 'createdAt',
-        sortDirection: SortDirections_enum_1.sortDirections.includes(queryParams.sortDirection) ? queryParams.sortDirection : 'desc'
+        sortDirection: SortDirections_enum_1.sortDirections.includes(queryParams.sortDirection) ? queryParams.sortDirection : 'desc',
+        searchNameTerm: queryParams.searchNameTerm
     };
 };
 exports.PaginationForBlogsPosts = PaginationForBlogsPosts;

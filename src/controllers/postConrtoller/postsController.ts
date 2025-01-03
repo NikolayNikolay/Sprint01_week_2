@@ -6,7 +6,7 @@ export const postsController ={
    async createPost (req:Request , res:Response){
       const createdPost = await postsService.create(req.body,req.params.id)
       if (!createdPost) {
-         res.send(httpStatusCodes.BAD_REQUEST)
+         res.send(httpStatusCodes.NOT_FOUND)
       }
       res.status(httpStatusCodes.CREATED).send(createdPost)
    },
