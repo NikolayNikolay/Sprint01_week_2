@@ -6,7 +6,7 @@ import { filter, PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPo
 
 export const blogPostsService = {
    async getAllPostsForBlog(blogId:any, queryParams:QueryParams ):Promise<PaginationQueryPostsType>{
-      const searchFilter = filter(queryParams)
+      const searchFilter = filter(queryParams, blogId)
       const totalCount = await postRepository.totalCountPostsforBlog(searchFilter)
       
       // create paginations params for serch posts of blog

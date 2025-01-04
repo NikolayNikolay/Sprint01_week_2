@@ -23,7 +23,7 @@ exports.blogsService = {
             return false;
         });
     },
-    getAll(queryParams) {
+    getAll(blogId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const serchFilter = (0, queryParamsForBlogPosts_1.filter)(queryParams);
             const totalCount = yield blogsRepository_1.blogRepository.totalBlogs(serchFilter);

@@ -37,9 +37,6 @@ exports.blogRepository = {
             return items;
         });
     },
-    // return blogCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
-    // .skip((paginations.pageNumber - 1) * paginations.pageSize)
-    // .limit(paginations.pageSize).toArray()
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id }, { projection: { _id: 0 } });

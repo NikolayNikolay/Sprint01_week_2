@@ -15,8 +15,8 @@ export  const PaginationForBlogsPosts = (queryParams:QueryParams ):QueryParams =
 }
 
 
-export const filter = (params:any)=>{
-   const id = params.blogId ? { blogId: params.blogId } : {}
+export const filter = (params:any, blogId?:any)=>{
+   const id = blogId ? { blogId: blogId } : {}
    const search = params.searchNameTerm && params.sortBy ? {[params.sortBy]: {$regex: params.searchNameTerm, $options: 'i'}}: {}
    return {...id,...search}
 }

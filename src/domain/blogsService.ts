@@ -18,7 +18,7 @@ export const blogsService = {
       }
       return false
    },
-   async getAll(queryParams: QueryParams):Promise<PaginationBlogsType> {
+   async getAll(blogId:any,queryParams: QueryParams):Promise<PaginationBlogsType> {
       const serchFilter = filter(queryParams)
       const totalCount = await blogRepository.totalBlogs(serchFilter)
       const paginationForBlogs = PaginationForBlogsPosts(queryParams)

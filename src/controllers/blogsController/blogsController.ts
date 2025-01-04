@@ -11,7 +11,7 @@ export const createBlogController = async (req:Request , res:Response)=>{
 }
 
 export const getAllBlogController = async (req:Request | any , res:Response)=>{
-   const allBlogs = await blogsService.getAll(req.query) 
+   const allBlogs = await blogsService.getAll(req.params.id, req.query) 
    res.status(httpStatusCodes.OK).send(allBlogs)
 }
 

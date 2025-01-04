@@ -18,7 +18,7 @@ const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createBlogController = createBlogController;
 const getAllBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const allBlogs = yield blogsService_1.blogsService.getAll(req.query);
+    const allBlogs = yield blogsService_1.blogsService.getAll(req.params.id, req.query);
     res.status(settings_1.httpStatusCodes.OK).send(allBlogs);
 });
 exports.getAllBlogController = getAllBlogController;

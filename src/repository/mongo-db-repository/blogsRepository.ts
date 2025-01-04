@@ -27,9 +27,6 @@ export const blogRepository = {
          .toArray()
          return items
    },
-      // return blogCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
-      // .skip((paginations.pageNumber - 1) * paginations.pageSize)
-      // .limit(paginations.pageSize).toArray()
    async getById(id:string):Promise<BlogViewModelType | boolean>{
       const foundBlog = await blogCollection.findOne({"id": id},{projection:{_id:0}})
       if (!foundBlog) {
