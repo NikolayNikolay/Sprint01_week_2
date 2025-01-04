@@ -2,7 +2,7 @@ import { BlogInputModelType } from "../types/BlogInputModel"
 import { BlogViewModelType } from "../types/BlogViewModel"
 import { blogRepository } from "../repository/mongo-db-repository/blogsRepository"
 import { PaginationBlogsType, QueryParams } from "../types/PaginationsBlogsPostsType"
-import { PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts"
+import { filter, PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts"
 
 export const blogsService = {
    async create (input:BlogInputModelType ):Promise<BlogViewModelType | any >{
@@ -19,7 +19,8 @@ export const blogsService = {
       return false
    },
    async getAll(queryParams: QueryParams):Promise<PaginationBlogsType> {
-      const totalCount = await blogRepository.totalBlogs()
+      const serchFilter = filter(queryParams)
+      const totalCount = await blogRepository.totalBlogs(serchFilter)
       const paginationForBlogs = PaginationForBlogsPosts(queryParams)
       const blogs = await blogRepository.getAll(paginationForBlogs)
       return {

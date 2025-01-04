@@ -50,10 +50,6 @@ export const blogRepository = {
       return deletedBlog.deletedCount === 1
    },
    async totalBlogs(params?:any){
-      const filter:any = {}
-      if (params) {
-         filter.blogId = params
-      }
-      return await blogCollection.countDocuments(filter)
+      return await blogCollection.countDocuments(params)
    }
 }

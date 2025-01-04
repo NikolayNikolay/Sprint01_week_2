@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PaginationForBlogsPosts = void 0;
+exports.filter = exports.PaginationForBlogsPosts = void 0;
 const SortDirections_enum_1 = require("../enums/SortDirections.enum");
 const PaginationForBlogsPosts = (queryParams) => {
     return {
@@ -12,3 +12,9 @@ const PaginationForBlogsPosts = (queryParams) => {
     };
 };
 exports.PaginationForBlogsPosts = PaginationForBlogsPosts;
+const filter = (params) => {
+    const id = params.blogId ? { blogId: params.blogId } : {};
+    const search = params.searchNameTerm && params.sortBy ? { [params.sortBy]: { $regex: params.searchNameTerm, $options: 'i' } } : {};
+    return Object.assign(Object.assign({}, id), search);
+};
+exports.filter = filter;

@@ -25,7 +25,8 @@ exports.blogsService = {
     },
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const totalCount = yield blogsRepository_1.blogRepository.totalBlogs();
+            const serchFilter = (0, queryParamsForBlogPosts_1.filter)(queryParams);
+            const totalCount = yield blogsRepository_1.blogRepository.totalBlogs(serchFilter);
             const paginationForBlogs = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
             const blogs = yield blogsRepository_1.blogRepository.getAll(paginationForBlogs);
             return {

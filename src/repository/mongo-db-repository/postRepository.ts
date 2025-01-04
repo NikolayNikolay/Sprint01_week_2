@@ -37,10 +37,6 @@ export const postRepository = {
       return deletedPost.deletedCount === 1
    },
    async totalCountPostsforBlog(params?:any){
-      const filter:any = {}
-      if (params) {
-         filter.blogId = params
-      }
-      return await postCollection.countDocuments(filter)
+      return await postCollection.countDocuments(params)
    }
 }

@@ -2,12 +2,12 @@ import { PaginationQueryPostsType, QueryParams } from "../types/PaginationsBlogs
 import { blogPostsRepository } from "../repository/mongo-db-repository/blog-post-repository";
 import { postRepository } from "../repository/mongo-db-repository/postRepository";
 import { SortDirections, sortDirections } from "../enums/SortDirections.enum";
-import { PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts";
+import { filter, PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts";
 
 export const blogPostsService = {
    async getAllPostsForBlog(blogId:any, queryParams:QueryParams ):Promise<PaginationQueryPostsType>{
+      const searchFilter = filter(queryParams)
       const totalCount = await postRepository.totalCountPostsforBlog(blogId)
-      console.log(queryParams);
       
       // create paginations params for serch posts of blog
       const PaginationParams = PaginationForBlogsPosts(queryParams)

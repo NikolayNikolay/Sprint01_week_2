@@ -67,11 +67,7 @@ exports.blogRepository = {
     },
     totalBlogs(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const filter = {};
-            if (params) {
-                filter.blogId = params;
-            }
-            return yield mongo_db_1.blogCollection.countDocuments(filter);
+            return yield mongo_db_1.blogCollection.countDocuments(params);
         });
     }
 };

@@ -16,8 +16,8 @@ const queryParamsForBlogPosts_1 = require("../helpers/queryParamsForBlogPosts");
 exports.blogPostsService = {
     getAllPostsForBlog(blogId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
+            const searchFilter = (0, queryParamsForBlogPosts_1.filter)(queryParams);
             const totalCount = yield postRepository_1.postRepository.totalCountPostsforBlog(blogId);
-            console.log(queryParams);
             // create paginations params for serch posts of blog
             const PaginationParams = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
             const getItems = yield blog_post_repository_1.blogPostsRepository.getAllPostsForBlog(blogId, PaginationParams);
