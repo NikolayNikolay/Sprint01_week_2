@@ -9,10 +9,27 @@ export const blogRepository = {
      return await blogCollection.insertOne(newBlog)
    },
    async getAll(paginations:QueryParams):Promise<BlogViewModelType[]>{
-      return blogCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
-      .skip((paginations.pageNumber - 1) * paginations.pageSize)
-      .limit(paginations.pageSize).toArray()
+      console.log(paginations);
+      
+      let items= null
+      if(paginations.searchNameTerm){
+         items = await blogCollection.find({[paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" }},{projection:{_id:0}})
+         .sort(paginations.sortBy,paginations.sortDirection as SortDirections)
+         .skip((paginations.pageNumber - 1) * paginations.pageSize)
+         .limit(paginations.pageSize)
+         .toArray()
+         return items
+      }
+      items = await blogCollection.find({},{projection:{_id:0}})
+         .sort(paginations.sortBy,paginations.sortDirection as SortDirections)
+         .skip((paginations.pageNumber - 1) * paginations.pageSize)
+         .limit(paginations.pageSize)
+         .toArray()
+         return items
    },
+      // return blogCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
+      // .skip((paginations.pageNumber - 1) * paginations.pageSize)
+      // .limit(paginations.pageSize).toArray()
    async getById(id:string):Promise<BlogViewModelType | boolean>{
       const foundBlog = await blogCollection.findOne({"id": id},{projection:{_id:0}})
       if (!foundBlog) {

@@ -19,11 +19,27 @@ exports.blogRepository = {
     },
     getAll(paginations) {
         return __awaiter(this, void 0, void 0, function* () {
-            return mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } }).sort(paginations.sortBy, paginations.sortDirection)
+            console.log(paginations);
+            let items = null;
+            if (paginations.searchNameTerm) {
+                items = yield mongo_db_1.blogCollection.find({ [paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" } }, { projection: { _id: 0 } })
+                    .sort(paginations.sortBy, paginations.sortDirection)
+                    .skip((paginations.pageNumber - 1) * paginations.pageSize)
+                    .limit(paginations.pageSize)
+                    .toArray();
+                return items;
+            }
+            items = yield mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } })
+                .sort(paginations.sortBy, paginations.sortDirection)
                 .skip((paginations.pageNumber - 1) * paginations.pageSize)
-                .limit(paginations.pageSize).toArray();
+                .limit(paginations.pageSize)
+                .toArray();
+            return items;
         });
     },
+    // return blogCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
+    // .skip((paginations.pageNumber - 1) * paginations.pageSize)
+    // .limit(paginations.pageSize).toArray()
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id }, { projection: { _id: 0 } });
