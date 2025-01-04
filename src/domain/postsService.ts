@@ -9,13 +9,17 @@ import { PaginationForBlogsPosts } from "../helpers/queryParamsForBlogPosts"
 export const postsService = {
    async create (input:PostInputModelType, idBlog:any ): Promise <PostViewModelType | any>{
       const checkdId = input.blogId || idBlog
+      console.log(checkdId );
+      
       const blog = await blogRepository.getById(checkdId) as BlogViewModelType
+      console.log(blog );
+      
       if (blog) {
          const newPost = {
             ...input,
             id: Date.now() + Math.random().toString(),
             blogName: blog.name,
-            blogId:idBlog || input.blogId,
+            blogId:checkdId,
             createdAt: new Date().toISOString()
          }
          console.log( newPost);

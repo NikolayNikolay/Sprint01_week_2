@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogPostsController = void 0;
-const blogsPostsService_1 = require("../../domain/blogsPostsService");
-const settings_1 = require("../../settings");
-exports.blogPostsController = {
-    getAllPostsForBlog(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const paginationsPostResult = yield blogsPostsService_1.blogPostsService.getAllPostsForBlog(req.params.id, req.query);
-            res.status(settings_1.httpStatusCodes.OK).send(paginationsPostResult);
-        });
+exports.blogPostsUriParamsId = void 0;
+const settings_1 = require("../settings");
+const blogsRepository_1 = require("../repository/mongo-db-repository/blogsRepository");
+const blogPostsUriParamsId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const fuondBlog = yield blogsRepository_1.blogRepository.getById(req.params.id);
+    if (!fuondBlog) {
+        res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND);
+        return;
     }
-};
+    next();
+});
+exports.blogPostsUriParamsId = blogPostsUriParamsId;

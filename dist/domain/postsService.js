@@ -17,9 +17,11 @@ exports.postsService = {
     create(input, idBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             const checkdId = input.blogId || idBlog;
+            console.log(checkdId);
             const blog = yield blogsRepository_1.blogRepository.getById(checkdId);
+            console.log(blog);
             if (blog) {
-                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, blogId: idBlog || input.blogId, createdAt: new Date().toISOString() });
+                const newPost = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), blogName: blog.name, blogId: checkdId, createdAt: new Date().toISOString() });
                 console.log(newPost);
                 return yield postRepository_1.postRepository.create(newPost);
             }

@@ -17,7 +17,8 @@ exports.postsController = {
         return __awaiter(this, void 0, void 0, function* () {
             const createdPost = yield postsService_1.postsService.create(req.body, req.params.id);
             if (!createdPost) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND);
+                return;
             }
             res.status(settings_1.httpStatusCodes.CREATED).send(createdPost);
         });

@@ -14,7 +14,16 @@ const mongo_db_1 = require("../../db/mongo-db");
 exports.blogPostsRepository = {
     getAllPostsForBlog(blogId, paginations) {
         return __awaiter(this, void 0, void 0, function* () {
-            const items = yield mongo_db_1.postCollection.find({ 'blogId': blogId }, { projection: { _id: 0 } })
+            let items = null;
+            if (paginations.searchNameTerm) {
+                items = yield mongo_db_1.postCollection.find({ [paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" }, 'blogId': blogId }, { projection: { _id: 0 } })
+                    .sort(paginations.sortBy, paginations.sortDirection)
+                    .skip((paginations.pageNumber - 1) * paginations.pageSize)
+                    .limit(paginations.pageSize)
+                    .toArray();
+                return items;
+            }
+            items = yield mongo_db_1.postCollection.find({ 'blogId': blogId }, { projection: { _id: 0 } })
                 .sort(paginations.sortBy, paginations.sortDirection)
                 .skip((paginations.pageNumber - 1) * paginations.pageSize)
                 .limit(paginations.pageSize)

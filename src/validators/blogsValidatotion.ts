@@ -1,5 +1,5 @@
 import { body,param } from "express-validator"
-
+import { blogRepository } from "../repository/mongo-db-repository/blogsRepository"
 
 
 export const blogsNameValidation = body('name').isString().withMessage('can not be a number').trim().isLength({min:1, max:15}).withMessage('can not be long then 15 symbols')
@@ -23,7 +23,7 @@ export const blogsWebsiteUrlValidation = body('websiteUrl')
                                                 }
                                              return true
                                           })
-export const blogPostsUriParamsId = param('id').isNumeric().withMessage('Must be valid id')
+export const blogPostsUriParamsIsId = param('id').isNumeric().withMessage('Must be valid id')
 
 
 export const middlewareValidationArray = [blogsNameValidation,blogsDescriptionValidation,blogsWebsiteUrlValidation]

@@ -7,12 +7,20 @@ import { PostViewModelType } from "../../types/PostViewModel";
 
 export const blogPostsRepository = {
    async getAllPostsForBlog(blogId:any,paginations:QueryParams):Promise<PostViewModelType[]>{
-      
-      const items = await postCollection.find({'blogId':blogId},{projection:{_id:0}})
-      .sort(paginations.sortBy, paginations.sortDirection as SortDirections)
-      .skip((paginations.pageNumber - 1) * paginations.pageSize)
-      .limit(paginations.pageSize)
-      .toArray()
-      return items
+         let items = null
+      if(paginations.searchNameTerm){
+         items = await postCollection.find({[paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" },'blogId':blogId },{projection:{_id:0}})
+         .sort(paginations.sortBy,paginations.sortDirection as SortDirections)
+         .skip((paginations.pageNumber - 1) * paginations.pageSize)
+         .limit(paginations.pageSize)
+         .toArray()
+         return items
+      }
+      items = await postCollection.find({'blogId':blogId },{projection:{_id:0}})
+         .sort(paginations.sortBy,paginations.sortDirection as SortDirections)
+         .skip((paginations.pageNumber - 1) * paginations.pageSize)
+         .limit(paginations.pageSize)
+         .toArray()
+         return items
    }
 }

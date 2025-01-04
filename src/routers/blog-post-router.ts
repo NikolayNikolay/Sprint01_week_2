@@ -4,9 +4,10 @@ import { inputCheckErrorsMiddleware } from "../middleweares/imputCheckErrorsMidd
 import { postsController } from "../controllers/postConrtoller/postsController"
 import { blogPostsController } from "../controllers/blog-post-Controller/blog-post-controller"
 import { Request, Response, Router } from "express"
-import { blogPostsUriParamsId } from "../validators/blogsValidatotion"
+import { blogPostsUriParamsId } from '../middleweares/queryParamsMiddleweare'
+import { blogPostsUriParamsIsId } from "../validators/blogsValidatotion"
 
 export const blogPostRouter = Router()
 
-blogPostRouter.post('/:id/posts',authMiddleware,blogPostsUriParamsId,postTitleValidation,postShortDescriptionValidation,postContentValidation,inputCheckErrorsMiddleware, postsController.createPost )
-blogPostRouter.get('/:id/posts',blogPostsUriParamsId, blogPostsController.getAllPostsForBlog)
+blogPostRouter.post('/:id/posts',authMiddleware,postTitleValidation,postShortDescriptionValidation,postContentValidation,inputCheckErrorsMiddleware, postsController.createPost )
+blogPostRouter.get('/:id/posts', blogPostsUriParamsId,blogPostsController.getAllPostsForBlog)
