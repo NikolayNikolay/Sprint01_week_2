@@ -33,7 +33,7 @@ export const usersCervice = {
       const user = {
          ...reqBody,
          password: await this._createHashPassword(reqBody.password),
-         createdAt: new Date().toString()
+         createdAt: new Date().toISOString()
       }
       const createUserId = await usersRepository.create(user)
       

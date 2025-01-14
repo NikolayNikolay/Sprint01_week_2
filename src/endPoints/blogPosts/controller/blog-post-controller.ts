@@ -14,7 +14,7 @@ export const blogPostsController= {
    async createPostForBlog(req:Request,res:Response){
       const createdPost = await blogPostsService.createPostForBlog(req.body, req.params.id)
       if(!createdPost){
-         res.send(httpStatusCodes.BAD_REQUEST)
+         res.send(httpStatusCodes.NOT_FOUND)
          return
       }
       const getCreatedPost = await blogPostsQueryRepository.getPostforBlog(new ObjectId(createdPost))

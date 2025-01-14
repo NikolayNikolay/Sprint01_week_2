@@ -5,7 +5,7 @@ import { postsController } from "../../posts/controller/postsController"
 import { blogPostsController } from "../controller/blog-post-controller"
 import { Request, Response, Router } from "express"
 import { blogPostsUriParamsId } from '../../../middleweares/queryParamsMiddleweare'
-import { isValidObjectId } from "../../../validators/paramsIdValidation"
+import { isValidIdObjectFromBody, isValidObjectId } from "../../../validators/paramsIdValidation"
 
 
 export const blogPostRouter = Router()
