@@ -15,7 +15,7 @@ const postsService_1 = require("../../domain/postsService");
 exports.postsController = {
     createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdPost = yield postsService_1.postsService.create(req.body, req.params.id);
+            const createdPost = yield postsService_1.postsService.create(req.body);
             if (!createdPost) {
                 res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND);
                 return;

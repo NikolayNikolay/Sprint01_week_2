@@ -1,5 +1,6 @@
-import {BlogViewModelType} from './BlogViewModel'
-import { PostViewModelType } from './PostViewModel'
+
+import { BlogViewModelType } from '../endPoints/blogs/models/BlogViewModel'
+import { PostViewModelType } from '../endPoints/posts/models/PostViewModel'
 
 export type dbType = {
    blogs: BlogViewModelType[],

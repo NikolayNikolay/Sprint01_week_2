@@ -15,10 +15,7 @@ exports.postRepository = {
     create(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield mongo_db_1.postCollection.insertOne(newPost);
-            if (result.acknowledged) {
-                return yield mongo_db_1.postCollection.findOne({ 'id': newPost.id }, { projection: { _id: 0 } });
-            }
-            return false;
+            return result.insertedId.toString();
         });
     },
     getAll(paginations) {
@@ -30,7 +27,7 @@ exports.postRepository = {
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundPost = yield mongo_db_1.postCollection.findOne({ 'id': id }, { projection: { _id: 0 } });
+            const foundPost = yield mongo_db_1.postCollection.findOne({ '_id': id });
             if (!foundPost) {
                 return false;
             }
@@ -39,17 +36,17 @@ exports.postRepository = {
     },
     update(input, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existedPost = yield mongo_db_1.postCollection.findOne({ "id": id });
+            const existedPost = yield mongo_db_1.postCollection.findOne({ "_id": id });
             if (!existedPost) {
                 return false;
             }
-            const result = yield mongo_db_1.postCollection.updateOne({ "id": id }, { $set: Object.assign({}, input) });
+            const result = yield mongo_db_1.postCollection.updateOne({ "_id": id }, { $set: Object.assign({}, input) });
             return result.acknowledged;
         });
     },
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedPost = yield mongo_db_1.postCollection.deleteOne({ "id": id });
+            const deletedPost = yield mongo_db_1.postCollection.deleteOne({ "_id": id });
             return deletedPost.deletedCount === 1;
         });
     },

@@ -1,11 +1,13 @@
 import express from 'express'
 import cors from 'cors'
-import {blogsRouter} from './routers/blogs-router'
-import { postsRouter } from './routers/posts-router';
 import { SETTINGS } from "./settings";
 import { Request, Response } from "express"
-import { deletAllDataController } from './controllers/deleteAllDataController/deleteAllDataController';
-import { blogPostRouter } from './routers/blog-post-router';
+import { blogPostRouter } from './endPoints/blogPosts/router/blog-post-router';
+import { usersRouter } from './endPoints/users/router/users-router';
+import { postsRouter } from './endPoints/posts/router/posts-router';
+import { deletAllDataController } from './endPoints/deleteAllData/controller/deleteAllDataController';
+import { blogsRouter } from './endPoints/blogs/router/blogs-router';
+import { authLoginRouter } from './endPoints/usersAuthorisation/router/authLogin-router';
 
 export const app = express() // создать приложение
 app.use(express.json()) // создание свойств-объектов body и query во всех реквестах
@@ -15,6 +17,8 @@ app.use(cors()) // разрешить любым фронтам делать з�
 app.use(SETTINGS.PATH.blogs, blogsRouter)
 app.use(SETTINGS.PATH.blogs,blogPostRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)
+app.use(SETTINGS.PATH.users, usersRouter)
+app.use(SETTINGS.PATH.authLogin, authLoginRouter)
 app.delete(SETTINGS.PATH.dellAllData, deletAllDataController )
 app.get('/', (req:Request, res:Response) => {
       // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита

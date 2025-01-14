@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.usersRouter = void 0;
+const express_1 = require("express");
+const autorisMiddleweare_1 = require("../../../middleweares/autorisMiddleweare");
+const imputCheckErrorsMiddleware_1 = require("../../../middleweares/imputCheckErrorsMiddleware");
+const usersValidator_1 = require("../validators/usersValidator");
+const usersController_1 = require("../controller/usersController");
+const paramsIdValidation_1 = require("../../../validators/paramsIdValidation");
+exports.usersRouter = (0, express_1.Router)();
+exports.usersRouter.get('/', autorisMiddleweare_1.authMiddleware, usersController_1.usersController.getAllUsers);
+exports.usersRouter.post('/', autorisMiddleweare_1.authMiddleware, usersValidator_1.usersPasswordValidations, usersValidator_1.usersLoginValidations, usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, usersController_1.usersController.createUser);
+exports.usersRouter.delete('/:id', autorisMiddleweare_1.authMiddleware, paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, usersController_1.usersController.deleteUser);
+exports.usersRouter.get('/:id', autorisMiddleweare_1.authMiddleware, paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, usersController_1.usersController.getUserById);

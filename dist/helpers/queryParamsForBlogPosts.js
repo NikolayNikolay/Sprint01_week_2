@@ -12,8 +12,8 @@ const PaginationForBlogsPosts = (queryParams) => {
     };
 };
 exports.PaginationForBlogsPosts = PaginationForBlogsPosts;
-const filter = (params, blogId) => {
-    const id = blogId ? { blogId: blogId } : {};
+const filter = (params, Id) => {
+    const id = Id ? { blogId: Id } : {};
     const search = params.searchNameTerm && params.sortBy ? { [params.sortBy]: { $regex: params.searchNameTerm, $options: 'i' } } : {};
     return Object.assign(Object.assign({}, id), search);
 };

@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.usersRouter = void 0;
+const express_1 = require("express");
+const autorisMiddleweare_1 = require("../middleweares/autorisMiddleweare");
+const imputCheckErrorsMiddleware_1 = require("../middleweares/imputCheckErrorsMiddleware");
+exports.usersRouter = (0, express_1.Router)();
+exports.usersRouter.get('/', autorisMiddleweare_1.authMiddleware, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, (req, res) => { res.send(200); });
+exports.usersRouter.post('/', autorisMiddleweare_1.authMiddleware, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware);
+exports.usersRouter.delete('/:id', autorisMiddleweare_1.authMiddleware, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware);

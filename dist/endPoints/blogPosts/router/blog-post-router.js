@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blogPostRouter = void 0;
+const autorisMiddleweare_1 = require("../../../middleweares/autorisMiddleweare");
+const postsValidations_1 = require("../../posts/validators/postsValidations");
+const imputCheckErrorsMiddleware_1 = require("../../../middleweares/imputCheckErrorsMiddleware");
+const blog_post_controller_1 = require("../controller/blog-post-controller");
+const express_1 = require("express");
+const paramsIdValidation_1 = require("../../../validators/paramsIdValidation");
+exports.blogPostRouter = (0, express_1.Router)();
+exports.blogPostRouter.post('/:id/posts', autorisMiddleweare_1.authMiddleware, paramsIdValidation_1.isValidObjectId, postsValidations_1.postTitleValidation, postsValidations_1.postShortDescriptionValidation, postsValidations_1.postContentValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blog_post_controller_1.blogPostsController.createPostForBlog);
+exports.blogPostRouter.get('/:id/posts', paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blog_post_controller_1.blogPostsController.getAllPostsForBlog);

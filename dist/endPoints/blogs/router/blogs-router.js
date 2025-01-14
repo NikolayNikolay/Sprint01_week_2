@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blogsRouter = void 0;
+const express_1 = require("express");
+const blogsController_1 = require("../controller/blogsController");
+const blogsValidatotion_1 = require("../validators/blogsValidatotion");
+const imputCheckErrorsMiddleware_1 = require("../../../middleweares/imputCheckErrorsMiddleware");
+const paramsIdValidation_1 = require("../../../validators/paramsIdValidation");
+const autorisMiddleweare_1 = require("../../../middleweares/autorisMiddleweare");
+exports.blogsRouter = (0, express_1.Router)();
+exports.blogsRouter.get('/', blogsController_1.getAllBlogController);
+exports.blogsRouter.post('/', autorisMiddleweare_1.authMiddleware, blogsValidatotion_1.blogsDescriptionValidation, blogsValidatotion_1.blogsNameValidation, blogsValidatotion_1.blogsWebsiteUrlValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blogsController_1.createBlogController);
+exports.blogsRouter.get('/:id', paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blogsController_1.getByIdController);
+exports.blogsRouter.put('/:id', autorisMiddleweare_1.authMiddleware, paramsIdValidation_1.isValidObjectId, blogsValidatotion_1.blogsDescriptionValidation, blogsValidatotion_1.blogsNameValidation, blogsValidatotion_1.blogsWebsiteUrlValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blogsController_1.updateByIdController);
+exports.blogsRouter.delete('/:id', autorisMiddleweare_1.authMiddleware, paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, blogsController_1.deletByIdController);

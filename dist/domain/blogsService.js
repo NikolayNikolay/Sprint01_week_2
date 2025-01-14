@@ -12,23 +12,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const blogsRepository_1 = require("../repository/mongo-db-repository/blogsRepository");
 const queryParamsForBlogPosts_1 = require("../helpers/queryParamsForBlogPosts");
+const mongodb_1 = require("mongodb");
+const viewModelsMapMethod_1 = require("../helpers/viewModelsMapMethod");
 exports.blogsService = {
     create(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newBlog = Object.assign(Object.assign({}, input), { id: Date.now() + Math.random().toString(), createdAt: new Date().toISOString(), isMembership: false });
-            const result = yield blogsRepository_1.blogRepository.create(newBlog);
-            if (result.acknowledged) {
-                return blogsRepository_1.blogRepository.getById(newBlog.id);
+            const newBlog = Object.assign(Object.assign({}, input), { createdAt: new Date().toISOString(), isMembership: false });
+            const resultId = yield blogsRepository_1.blogRepository.create(newBlog);
+            console.log(resultId);
+            if (resultId) {
+                const blog = yield blogsRepository_1.blogRepository.getById(new mongodb_1.ObjectId(resultId));
+                return (0, viewModelsMapMethod_1.mapViewBlogsModel)(blog);
             }
             return false;
         });
     },
-    getAll(blogId, queryParams) {
+    getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const serchFilter = (0, queryParamsForBlogPosts_1.filter)(queryParams);
             const totalCount = yield blogsRepository_1.blogRepository.totalBlogs(serchFilter);
             const paginationForBlogs = (0, queryParamsForBlogPosts_1.PaginationForBlogsPosts)(queryParams);
-            const blogs = yield blogsRepository_1.blogRepository.getAll(paginationForBlogs);
+            let blogs = yield blogsRepository_1.blogRepository.getAll(paginationForBlogs);
+            blogs = (0, viewModelsMapMethod_1.mapViewBlogsModel)(blogs);
             return {
                 pagesCount: Math.ceil(totalCount / paginationForBlogs.pageSize),
                 page: paginationForBlogs.pageNumber,
@@ -40,17 +45,21 @@ exports.blogsService = {
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blogsRepository_1.blogRepository.getById(id);
+            const blog = yield blogsRepository_1.blogRepository.getById(new mongodb_1.ObjectId(id));
+            if (blog) {
+                return (0, viewModelsMapMethod_1.mapViewBlogsModel)(blog);
+            }
+            return false;
         });
     },
     update(input, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return blogsRepository_1.blogRepository.update(input, id);
+            return blogsRepository_1.blogRepository.update(input, new mongodb_1.ObjectId(id));
         });
     },
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return blogsRepository_1.blogRepository.deleteById(id);
+            return blogsRepository_1.blogRepository.deleteById(new mongodb_1.ObjectId(id));
         });
     }
 };

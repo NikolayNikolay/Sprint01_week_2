@@ -14,7 +14,8 @@ const mongo_db_1 = require("../../db/mongo-db");
 exports.blogRepository = {
     create(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield mongo_db_1.blogCollection.insertOne(newBlog);
+            const resultCreated = yield mongo_db_1.blogCollection.insertOne(newBlog);
+            return resultCreated.insertedId.toString();
         });
     },
     getAll(paginations) {
@@ -22,14 +23,14 @@ exports.blogRepository = {
             console.log(paginations);
             let items = null;
             if (paginations.searchNameTerm) {
-                items = yield mongo_db_1.blogCollection.find({ [paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" } }, { projection: { _id: 0 } })
+                items = yield mongo_db_1.blogCollection.find({ [paginations.sortBy]: { $regex: paginations.searchNameTerm, $options: "i" } })
                     .sort(paginations.sortBy, paginations.sortDirection)
                     .skip((paginations.pageNumber - 1) * paginations.pageSize)
                     .limit(paginations.pageSize)
                     .toArray();
                 return items;
             }
-            items = yield mongo_db_1.blogCollection.find({}, { projection: { _id: 0 } })
+            items = yield mongo_db_1.blogCollection.find({})
                 .sort(paginations.sortBy, paginations.sortDirection)
                 .skip((paginations.pageNumber - 1) * paginations.pageSize)
                 .limit(paginations.pageSize)
@@ -39,7 +40,7 @@ exports.blogRepository = {
     },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundBlog = yield mongo_db_1.blogCollection.findOne({ "id": id }, { projection: { _id: 0 } });
+            const foundBlog = yield mongo_db_1.blogCollection.findOne({ '_id': id });
             if (!foundBlog) {
                 return false;
             }
@@ -48,17 +49,17 @@ exports.blogRepository = {
     },
     update(input, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existedBlog = yield mongo_db_1.blogCollection.findOne({ "id": id });
+            const existedBlog = yield mongo_db_1.blogCollection.findOne({ "_id": id });
             if (!existedBlog) {
                 return false;
             }
-            yield mongo_db_1.blogCollection.updateOne({ "id": id }, { $set: Object.assign({}, input) });
+            yield mongo_db_1.blogCollection.updateOne({ "_id": id }, { $set: Object.assign({}, input) });
             return true;
         });
     },
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedBlog = yield mongo_db_1.blogCollection.deleteOne({ "id": id });
+            const deletedBlog = yield mongo_db_1.blogCollection.deleteOne({ "_id": id });
             return deletedBlog.deletedCount === 1;
         });
     },
