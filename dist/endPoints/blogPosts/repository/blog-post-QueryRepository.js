@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogPostsQueryRepository = void 0;
+const mongodb_1 = require("mongodb");
 const mongo_db_1 = require("../../../db/mongo-db");
 const queryParamsPaginations_1 = require("../../../helpers/queryParamsPaginations");
 const serchFilter_1 = require("../../../helpers/serchFilter");
@@ -17,6 +18,10 @@ const viewModelsMapMethod_1 = require("../../../helpers/viewModelsMapMethod");
 exports.blogPostsQueryRepository = {
     getAllPostsForBlog(blogId, queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
+            const findBlog = yield mongo_db_1.blogCollection.findOne({ '_id': new mongodb_1.ObjectId(blogId) });
+            if (!findBlog) {
+                return false;
+            }
             const searchFilter = (0, serchFilter_1.filter)(queryParams, blogId);
             const totalCount = yield this.totalCountPostsforBlog(searchFilter);
             const PaginationParams = (0, queryParamsPaginations_1.PaginationQueryParams)(queryParams);

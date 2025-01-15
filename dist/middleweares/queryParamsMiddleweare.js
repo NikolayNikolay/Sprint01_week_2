@@ -10,14 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogPostsUriParamsId = void 0;
-const settings_1 = require("../settings");
 const mongodb_1 = require("mongodb");
-const blogsRepository_1 = require("../endPoints/blogs/repository/blogsRepository");
+const blogQyeryRepository_1 = require("../endPoints/blogs/repository/blogQyeryRepository");
+const express_validator_1 = require("express-validator");
 const blogPostsUriParamsId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const fuondBlog = yield blogsRepository_1.blogRepository.getById(new mongodb_1.ObjectId(req.params.id));
+    const fuondBlog = yield blogQyeryRepository_1.queryBlogRepository.getById(new mongodb_1.ObjectId(req.body.blogId));
     if (!fuondBlog) {
-        res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND);
-        return;
+        const errors = (0, express_validator_1.validationResult)(req);
     }
     next();
 });

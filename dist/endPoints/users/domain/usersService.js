@@ -42,7 +42,7 @@ exports.usersCervice = {
                 };
             }
             //create Hash Password
-            const user = Object.assign(Object.assign({}, reqBody), { password: yield this._createHashPassword(reqBody.password), createdAt: new Date().toString() });
+            const user = Object.assign(Object.assign({}, reqBody), { password: yield this._createHashPassword(reqBody.password), createdAt: new Date().toISOString() });
             const createUserId = yield usersRepository_1.usersRepository.create(user);
             return createUserId;
         });

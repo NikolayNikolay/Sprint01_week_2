@@ -9,6 +9,11 @@ import { ObjectId } from "mongodb"
 export const blogPostsController= {
    async getAllPostsForBlog(req:Request | any  ,res:Response){
       const paginationsPostResult = await blogPostsQueryRepository.getAllPostsForBlog(req.params.id,req.query)
+      
+      if (paginationsPostResult === false) {
+         res.send(httpStatusCodes.NOT_FOUND)
+         return
+      }
       res.status(httpStatusCodes.OK).send(paginationsPostResult)
    },
    async createPostForBlog(req:Request,res:Response){

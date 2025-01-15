@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { postCollection } from "../../../db/mongo-db";
+import { blogCollection, postCollection } from "../../../db/mongo-db";
 import { SortDirections } from "../../../enums/SortDirections.enum";
 import { PaginationQueryParams } from "../../../helpers/queryParamsPaginations";
 import { filter } from "../../../helpers/serchFilter";
@@ -10,7 +10,12 @@ import { PaginationBlogsType } from "../models/PaginationsBlogsPostsType";
 
 
 export const blogPostsQueryRepository = {
-   async getAllPostsForBlog(blogId:string, queryParams:QueryParamsType):Promise<PaginationBlogsType>{
+   async getAllPostsForBlog(blogId:string, queryParams:QueryParamsType):Promise<PaginationBlogsType | boolean>{
+      const findBlog = await blogCollection.findOne({'_id': new ObjectId(blogId)})
+      
+      if (!findBlog) {
+         return false
+      }
       const searchFilter = filter(queryParams, blogId)
       const totalCount = await this.totalCountPostsforBlog(searchFilter)
       const PaginationParams = PaginationQueryParams(queryParams)

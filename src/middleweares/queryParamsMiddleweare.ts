@@ -1,15 +1,14 @@
 
 import { Request, Response, NextFunction } from "express";
-import { httpStatusCodes } from "../settings";
 import { ObjectId } from "mongodb";
-import { blogRepository } from "../endPoints/blogs/repository/blogsRepository";
-
+import { queryBlogRepository } from "../endPoints/blogs/repository/blogQyeryRepository";
+import { validationResult } from "express-validator"
 
 export const blogPostsUriParamsId = async (req:Request,res:Response,next:NextFunction)=>{
-   const fuondBlog = await blogRepository.getById(new ObjectId(req.params.id))
+   const fuondBlog = await queryBlogRepository.getById(new ObjectId(req.body.blogId))
    if (!fuondBlog) {
-      res.sendStatus(httpStatusCodes.NOT_FOUND)
-      return
+      const errors = validationResult(req)
+      
    }
    next()
 }
