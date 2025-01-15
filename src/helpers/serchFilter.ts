@@ -13,7 +13,7 @@ export const filter = (params:any, Id?:any)=>{
    }
    
    const search = params.searchNameTerm && params.sortBy ? {[params.sortBy]: {$regex: params.searchNameTerm, $options: 'i'}}: {}
-   const loginOrEmail = params.searchLoginTerm || params.searchEmailTerm ? {"login": { "$regex": params.searchLoginTerm, "$options": "i" },
-  "email": { "$regex": params.searchEmailTerm , "$options": "i" }} : {}
+   const loginOrEmail = params.searchLoginTerm || params.searchEmailTerm ? {"$or": [{"login": { "$regex": params.searchLoginTerm, "$options": "i" }},
+  {"email": { "$regex": params.searchEmailTerm , "$options": "i" }}]} : {}
    return {...id,...search,...loginOrEmail}
 }
