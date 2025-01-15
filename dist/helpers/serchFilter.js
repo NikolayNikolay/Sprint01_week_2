@@ -12,6 +12,8 @@ const filter = (params, Id) => {
         }
     }
     const search = params.searchNameTerm && params.sortBy ? { [params.sortBy]: { $regex: params.searchNameTerm, $options: 'i' } } : {};
-    return Object.assign(Object.assign({}, id), search);
+    const loginOrEmail = params.searchLoginTerm || params.searchEmailTerm ? { "login": { "$regex": params.searchLoginTerm, "$options": "i" },
+        "email": { "$regex": params.searchEmailTerm, "$options": "i" } } : {};
+    return Object.assign(Object.assign(Object.assign({}, id), search), loginOrEmail);
 };
 exports.filter = filter;

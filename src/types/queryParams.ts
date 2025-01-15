@@ -3,5 +3,7 @@ export type QueryParamsType = {
    pageSize: number,
    sortBy: string ,
    sortDirection: string,
-   searchNameTerm?: string
+   searchNameTerm?: string,
+   searchLoginTerm?:string,
+   searchEmailTerm?:string
 }
