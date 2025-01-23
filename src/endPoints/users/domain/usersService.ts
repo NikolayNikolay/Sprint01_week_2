@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import { UserInputModel } from "../models/UserInputModel";
 import { usersRepository } from "../queryRepository/usersRepository";
 import bcrypt, { compare } from 'bcrypt';
-import { errorsMessagestype } from "../../../types/errorsMessagesType";
 import { LoginInputModelType } from "../../usersAuthorisation/models/LoginInputModel";
 
 export const usersCervice = {
@@ -43,19 +42,6 @@ export const usersCervice = {
       const deletedUser = await usersRepository.delete(new ObjectId(userId))
       return deletedUser
    },
-   async authorizationCheck(authData:LoginInputModelType):Promise<boolean>{
-      const checkLoginOrEmail = await usersRepository.findUserByEmailOrLogin(authData.loginOrEmail)
-      if (!checkLoginOrEmail) {
-         return false
-      }
-      const checkPssword = await this._comparePassword(authData.password, checkLoginOrEmail.password)
-      
-      if (!checkPssword) {
-         return false
-      }
-      return true
-   }
-   ,
    // create Hash Password
    async _createHashPassword(password:string){
       const saltRounds = 10
@@ -66,5 +52,4 @@ export const usersCervice = {
 
       return await bcrypt.compare(password , storedHash)
    },
-
 }

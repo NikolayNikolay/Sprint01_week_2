@@ -1,15 +1,29 @@
 import { Request , Response } from "express";
-import { usersCervice } from "../../users/domain/usersService";
 import { httpStatusCodes } from "../../../settings";
+import { authUserService } from "../domain/authLoginServise";
+import { ResultStatus } from "../../../enums/resultStatus";
+import { resultStatusToHttpStatusCode } from "../../../helpers/resultStatusToHttpStatusCode";
+import { jwtServise } from "../applications/jwtServises";
+
+
 
 
 export const authLoginController = {
    async authLoginPost(req:Request, res:Response){
-      const auth = await usersCervice.authorizationCheck(req.body)
-      if (!auth) {
-         res.sendStatus(httpStatusCodes.UNAUTHORIZED)
+      const authUser = await authUserService.authorizationCheck(req.body)
+      if (authUser.status === ResultStatus.Unathorized) {
+         res.sendStatus(resultStatusToHttpStatusCode(authUser.status))
          return
       }
-      res.sendStatus(httpStatusCodes.NO_CONTENT)
+      
+      const token = await jwtServise.generateJwtToken(authUser.data!)
+      res.status(resultStatusToHttpStatusCode(authUser.status)).send(token)
+   },
+   async getInformationOfMe(req:Request, res:Response){
+      if (!req.user) {
+         res.status(httpStatusCodes.UNAUTHORIZED_401)
+         return
+      }
+      res.status(httpStatusCodes.OK_200).send(req.user)
    }
 }

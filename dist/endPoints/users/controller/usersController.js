@@ -18,17 +18,17 @@ exports.usersController = {
     getAllUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const users = yield queryUsersRepository_1.queryUsersRepository.getAllUsers(req.query);
-            res.status(settings_1.httpStatusCodes.OK).send(users);
+            res.status(settings_1.httpStatusCodes.OK_200).send(users);
         });
     },
     getUserById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield queryUsersRepository_1.queryUsersRepository.getUserById(new mongodb_1.ObjectId(req.params.id));
             if (!user) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;
             }
-            res.status(settings_1.httpStatusCodes.OK).send(user);
+            res.status(settings_1.httpStatusCodes.OK_200).send(user);
         });
     },
     createUser(req, res) {
@@ -36,10 +36,10 @@ exports.usersController = {
             const userId = yield usersService_1.usersCervice.createUser(req.body);
             if (typeof userId === 'string') {
                 const getCreatedUser = yield queryUsersRepository_1.queryUsersRepository.getUserById(new mongodb_1.ObjectId(userId));
-                res.status(settings_1.httpStatusCodes.CREATED).send(getCreatedUser);
+                res.status(settings_1.httpStatusCodes.CREATED_201).send(getCreatedUser);
             }
             else {
-                res.status(settings_1.httpStatusCodes.BAD_REQUEST).send(userId);
+                res.status(settings_1.httpStatusCodes.BAD_REQUEST_400).send(userId);
                 return;
             }
         });
@@ -48,10 +48,10 @@ exports.usersController = {
         return __awaiter(this, void 0, void 0, function* () {
             const deletedUser = yield usersService_1.usersCervice.deletUser(req.params.id);
             if (!deletedUser) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;
             }
-            res.send(settings_1.httpStatusCodes.NO_CONTENT);
+            res.send(settings_1.httpStatusCodes.NO_CONTENT_204);
         });
     }
 };

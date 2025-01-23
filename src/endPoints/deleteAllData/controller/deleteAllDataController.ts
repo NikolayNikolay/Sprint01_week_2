@@ -13,7 +13,7 @@ export const deletAllDataController = async(req:Request , res:Response)=>{
    if (req.url === SETTINGS.PATH.dellAllData) {
       const isEmptyBlogs = await deleteAllDataBaseRepositoriry()
       if (isEmptyBlogs.length === 3) {
-         res.status(httpStatusCodes.NO_CONTENT).send('All data is deleted')
+         res.status(httpStatusCodes.NO_CONTENT_204).send('All data is deleted')
          return
       }
    }

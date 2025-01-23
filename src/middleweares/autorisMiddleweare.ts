@@ -8,13 +8,13 @@ export const authMiddleware = async (req:Request, res:Response, next:NextFunctio
  const authorizationHeader = req.headers['authorization'] as any;
     if (!authorizationHeader) {
         console.log('No Authorization header');
-      res.send(httpStatusCodes.UNAUTHORIZED);
+      res.send(httpStatusCodes.UNAUTHORIZED_401);
       return
     }
     
     if (!authorizationHeader.startsWith('Basic ')) {
         console.log('Authorization header is not Basic');
-      res.send(httpStatusCodes.UNAUTHORIZED);
+      res.send(httpStatusCodes.UNAUTHORIZED_401);
       return
     }
 
@@ -23,7 +23,7 @@ export const authMiddleware = async (req:Request, res:Response, next:NextFunctio
 
     if (encodedAuth !== expectedAuth) {
         console.log('Invalid credentials');
-      res.send(httpStatusCodes.UNAUTHORIZED);
+      res.send(httpStatusCodes.UNAUTHORIZED_401);
       return
     }
 

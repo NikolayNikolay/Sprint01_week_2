@@ -18,11 +18,6 @@ exports.postRepository = {
             return result.insertedId.toString();
         });
     },
-    // async getAll(paginations:QueryParamsType){
-    //    return postCollection.find({},{projection:{_id:0}}).sort(paginations.sortBy, paginations.sortDirection as SortDirections)
-    //    .skip((paginations.pageNumber - 1) * paginations.pageSize)
-    //    .limit(paginations.pageSize).toArray()
-    // },
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const foundPost = yield mongo_db_1.postCollection.findOne({ '_id': id });

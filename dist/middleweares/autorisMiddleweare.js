@@ -16,19 +16,19 @@ const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     const authorizationHeader = req.headers['authorization'];
     if (!authorizationHeader) {
         console.log('No Authorization header');
-        res.send(settings_1.httpStatusCodes.UNAUTHORIZED);
+        res.send(settings_1.httpStatusCodes.UNAUTHORIZED_401);
         return;
     }
     if (!authorizationHeader.startsWith('Basic ')) {
         console.log('Authorization header is not Basic');
-        res.send(settings_1.httpStatusCodes.UNAUTHORIZED);
+        res.send(settings_1.httpStatusCodes.UNAUTHORIZED_401);
         return;
     }
     const encodedAuth = authorizationHeader.slice(6); // Extract the base64 part
     const expectedAuth = Buffer.from(settings_1.ADMIN_AUTH, 'utf8').toString('base64');
     if (encodedAuth !== expectedAuth) {
         console.log('Invalid credentials');
-        res.send(settings_1.httpStatusCodes.UNAUTHORIZED);
+        res.send(settings_1.httpStatusCodes.UNAUTHORIZED_401);
         return;
     }
     next(); // Proceed to the next middleware or route handler

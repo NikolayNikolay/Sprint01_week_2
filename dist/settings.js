@@ -12,20 +12,24 @@ exports.SETTINGS = {
         dellAllData: "/testing/all-data",
         postsForBlog: "/:id/posts",
         users: '/users',
-        authLogin: '/auth/login',
+        authLogin: '/auth',
+        comments: '/comments',
         DATA_BASE_NAME: 'Blogers_Platform',
         BLOG_COLLECTION_NAME: "blogs",
         POST_COLLECTION_NAME: "posts",
         USERS_COLLECTION_NAME: "users",
+        COMMENTS_COLLECTION_NAME: 'comments'
     },
+    SECRET_KEY: process.env.SECRET_KEY || 12345
 };
 exports.mongoURI = process.env.MONGO_URL || 'mongodb://localhost:27017/';
 exports.httpStatusCodes = {
-    OK: 200,
-    CREATED: 201,
-    NO_CONTENT: 204,
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    NOT_FOUND: 404
+    OK_200: 200,
+    CREATED_201: 201,
+    NO_CONTENT_204: 204,
+    BAD_REQUEST_400: 400,
+    UNAUTHORIZED_401: 401,
+    NOT_FOUND_404: 404,
+    FORBIDDEN_403: 403
 };
 exports.ADMIN_AUTH = 'admin:qwerty';

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 
 export type UserViewModel= {
    id: string
@@ -12,4 +13,12 @@ export type PaginationQueryUsersType = {
    pageSize: number,
    totalCount: number,
    items?:UserViewModel[]
+}
+
+
+export type UserViewModelWith_id = {
+   _id: ObjectId
+   login: string
+   email: string
+   createdAt: string
 }

@@ -10,17 +10,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authLoginController = void 0;
-const usersService_1 = require("../../users/domain/usersService");
 const settings_1 = require("../../../settings");
+const authLoginServise_1 = require("../domain/authLoginServise");
+const resultStatus_1 = require("../../../enums/resultStatus");
+const resultStatusToHttpStatusCode_1 = require("../../../helpers/resultStatusToHttpStatusCode");
+const jwtServises_1 = require("../applications/jwtServises");
 exports.authLoginController = {
     authLoginPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const auth = yield usersService_1.usersCervice.authorizationCheck(req.body);
-            if (!auth) {
-                res.sendStatus(settings_1.httpStatusCodes.UNAUTHORIZED);
+            const authUser = yield authLoginServise_1.authUserService.authorizationCheck(req.body);
+            if (authUser.status === resultStatus_1.ResultStatus.Unathorized) {
+                res.sendStatus((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(authUser.status));
                 return;
             }
-            res.sendStatus(settings_1.httpStatusCodes.NO_CONTENT);
+            const token = yield jwtServises_1.jwtServise.generateJwtToken(authUser.data);
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(authUser.status)).send(token);
+        });
+    },
+    getInformationOfMe(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!req.user) {
+                res.status(settings_1.httpStatusCodes.UNAUTHORIZED_401);
+                return;
+            }
+            res.status(settings_1.httpStatusCodes.OK_200).send(req.user);
         });
     }
 };

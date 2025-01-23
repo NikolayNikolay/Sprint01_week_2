@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDB = exports.usersCollection = exports.postCollection = exports.blogCollection = exports.db = void 0;
+exports.runDB = exports.commentsCollection = exports.usersCollection = exports.postCollection = exports.blogCollection = exports.db = void 0;
 const mongodb_1 = require("mongodb");
 const settings_1 = require("../settings");
 const dotenv_1 = require("dotenv");
@@ -30,6 +30,7 @@ const runDB = (urlDb) => __awaiter(void 0, void 0, void 0, function* () {
         exports.blogCollection = exports.db.collection(settings_1.SETTINGS.PATH.BLOG_COLLECTION_NAME);
         exports.postCollection = exports.db.collection(settings_1.SETTINGS.PATH.POST_COLLECTION_NAME);
         exports.usersCollection = exports.db.collection(settings_1.SETTINGS.PATH.USERS_COLLECTION_NAME);
+        exports.commentsCollection = exports.db.collection(settings_1.SETTINGS.PATH.COMMENTS_COLLECTION_NAME);
         yield client.db("admin").command({ ping: 1 });
         console.log("You successfully connected to MongoDB!");
         return true;

@@ -1,4 +1,4 @@
 export type LoginInputModelType = {
-   loginOrEmail:	string
-   password:	string
+   loginOrEmail:	string,
+   password:	string,
    }

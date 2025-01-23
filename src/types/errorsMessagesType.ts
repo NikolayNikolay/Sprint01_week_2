@@ -1,8 +1,8 @@
-export type FieldErrortype = {
+export type FieldErrorType = {
    message: string,
    field	: string
 }
 
-export type errorsMessagestype = {
-   FieldError: FieldErrortype[]
+export type errorsMessagesType = {
+   FieldError: FieldErrorType[]
 }

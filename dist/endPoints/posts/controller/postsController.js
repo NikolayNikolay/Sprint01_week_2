@@ -20,27 +20,27 @@ exports.postsController = {
             const createdPostId = yield postsService_1.postsService.create(req.body);
             console.log(createdPostId);
             if (!createdPostId) {
-                res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND);
+                res.sendStatus(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;
             }
             const getCreatedPost = yield queryPostRepository_1.postQueryRepository.getById(new mongodb_1.ObjectId(createdPostId));
-            res.status(settings_1.httpStatusCodes.CREATED).send(getCreatedPost);
+            res.status(settings_1.httpStatusCodes.CREATED_201).send(getCreatedPost);
         });
     },
     getAllPosts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const allPosts = yield queryPostRepository_1.postQueryRepository.getAll(req.query);
-            res.status(settings_1.httpStatusCodes.OK).send(allPosts);
+            res.status(settings_1.httpStatusCodes.OK_200).send(allPosts);
         });
     },
     getPostById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const fuondPost = yield queryPostRepository_1.postQueryRepository.getById(new mongodb_1.ObjectId(req.params.id));
             if (!fuondPost) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
             }
             else {
-                res.status(settings_1.httpStatusCodes.OK).send(fuondPost);
+                res.status(settings_1.httpStatusCodes.OK_200).send(fuondPost);
             }
         });
     },
@@ -48,10 +48,10 @@ exports.postsController = {
         return __awaiter(this, void 0, void 0, function* () {
             const updetedPost = yield postsService_1.postsService.update(req.body, req.params.id);
             if (!updetedPost) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
             }
             else {
-                res.send(settings_1.httpStatusCodes.NO_CONTENT);
+                res.send(settings_1.httpStatusCodes.NO_CONTENT_204);
             }
         });
     },
@@ -59,10 +59,10 @@ exports.postsController = {
         return __awaiter(this, void 0, void 0, function* () {
             const deletedPost = yield postsService_1.postsService.deleteById(req.params.id);
             if (!deletedPost) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
             }
             else {
-                res.send(settings_1.httpStatusCodes.NO_CONTENT);
+                res.send(settings_1.httpStatusCodes.NO_CONTENT_204);
             }
         });
     }

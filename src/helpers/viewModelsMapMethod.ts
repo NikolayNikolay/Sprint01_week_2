@@ -74,3 +74,30 @@ export const mapViewUsersModel = (data:any):any[] | any=>{
       }
    }
 }
+
+export const mapViewCommentsModel = (data:any):any[] | any => {   
+   if (Array.isArray(data)) {
+      return data.map((comment:any)=>{
+         const {_id , ...item} = comment
+         return { id:_id.toString(),
+               content: item.content,
+               commentatorInfo: {
+                 userId: item.commentatorInfo.userId,
+                 userLogin: item.commentatorInfo.userLogin
+               },
+               createdAt:  item.createdAt
+               }
+      })
+   }
+   else{
+      const {_id , ...item} = data
+      return { id:_id.toString(),
+         content: item.content,
+         commentatorInfo: {
+           userId: item.commentatorInfo.userId,
+           userLogin: item.commentatorInfo.userLogin
+         },
+         createdAt:  item.createdAt
+      }
+   }
+}

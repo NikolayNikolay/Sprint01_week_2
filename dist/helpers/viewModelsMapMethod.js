@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapViewUsersModel = exports.mapViewPostsModel = exports.mapViewBlogsModel = void 0;
+exports.mapViewCommentsModel = exports.mapViewUsersModel = exports.mapViewPostsModel = exports.mapViewBlogsModel = void 0;
 const mapViewBlogsModel = (data) => {
     if (Array.isArray(data)) {
         return data.map((blog) => {
@@ -85,3 +85,30 @@ const mapViewUsersModel = (data) => {
     }
 };
 exports.mapViewUsersModel = mapViewUsersModel;
+const mapViewCommentsModel = (data) => {
+    if (Array.isArray(data)) {
+        return data.map((comment) => {
+            const { _id } = comment, item = __rest(comment, ["_id"]);
+            return { id: _id.toString(),
+                content: item.content,
+                commentatorInfo: {
+                    userId: item.commentatorInfo.userId,
+                    userLogin: item.commentatorInfo.userLogin
+                },
+                createdAt: item.createdAt
+            };
+        });
+    }
+    else {
+        const { _id } = data, item = __rest(data, ["_id"]);
+        return { id: _id.toString(),
+            content: item.content,
+            commentatorInfo: {
+                userId: item.commentatorInfo.userId,
+                userLogin: item.commentatorInfo.userLogin
+            },
+            createdAt: item.createdAt
+        };
+    }
+};
+exports.mapViewCommentsModel = mapViewCommentsModel;

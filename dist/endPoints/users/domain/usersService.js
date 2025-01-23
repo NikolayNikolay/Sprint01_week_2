@@ -53,19 +53,6 @@ exports.usersCervice = {
             return deletedUser;
         });
     },
-    authorizationCheck(authData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const checkLoginOrEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(authData.loginOrEmail);
-            if (!checkLoginOrEmail) {
-                return false;
-            }
-            const checkPssword = yield this._comparePassword(authData.password, checkLoginOrEmail.password);
-            if (!checkPssword) {
-                return false;
-            }
-            return true;
-        });
-    },
     // create Hash Password
     _createHashPassword(password) {
         return __awaiter(this, void 0, void 0, function* () {

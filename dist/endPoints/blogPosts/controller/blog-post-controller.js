@@ -19,21 +19,21 @@ exports.blogPostsController = {
         return __awaiter(this, void 0, void 0, function* () {
             const paginationsPostResult = yield blog_post_QueryRepository_1.blogPostsQueryRepository.getAllPostsForBlog(req.params.id, req.query);
             if (paginationsPostResult === false) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;
             }
-            res.status(settings_1.httpStatusCodes.OK).send(paginationsPostResult);
+            res.status(settings_1.httpStatusCodes.OK_200).send(paginationsPostResult);
         });
     },
     createPostForBlog(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const createdPost = yield blogsPostsService_1.blogPostsService.createPostForBlog(req.body, req.params.id);
             if (!createdPost) {
-                res.send(settings_1.httpStatusCodes.NOT_FOUND);
+                res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;
             }
             const getCreatedPost = yield blog_post_QueryRepository_1.blogPostsQueryRepository.getPostforBlog(new mongodb_1.ObjectId(createdPost));
-            res.status(settings_1.httpStatusCodes.CREATED).send(getCreatedPost);
+            res.status(settings_1.httpStatusCodes.CREATED_201).send(getCreatedPost);
         });
     },
 };

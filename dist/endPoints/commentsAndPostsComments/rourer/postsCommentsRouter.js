@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.postsCommentsRouter = void 0;
+const imputCheckErrorsMiddleware_1 = require("../../../middleweares/imputCheckErrorsMiddleware");
+const posts_router_1 = require("../../posts/router/posts-router");
+const authMidllewarer_1 = require("../../usersAuthorisation/midllewarers/authMidllewarer");
+const postsCommentsController_1 = require("../controllers/postsCommentsController");
+const commentsValidations_1 = require("../validators/commentsValidations");
+exports.postsCommentsRouter = posts_router_1.postsRouter;
+exports.postsCommentsRouter.post('/:postId/comments', authMidllewarer_1.authenticateUser, commentsValidations_1.commentContentValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, postsCommentsController_1.postCommentsController.createCommentForPost);
+exports.postsCommentsRouter.get('/:postId/comments', postsCommentsController_1.postCommentsController.getAllCommentsForPost);

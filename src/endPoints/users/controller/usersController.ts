@@ -12,17 +12,17 @@ import { ObjectId } from "mongodb";
 export const usersController = {
    async getAllUsers(req:Request | any,res:Response){
       const users = await queryUsersRepository.getAllUsers(req.query)
-      res.status(httpStatusCodes.OK).send(users)
+      res.status(httpStatusCodes.OK_200).send(users)
    },
    async getUserById(req:Request,res:Response){
       
       const user = await queryUsersRepository.getUserById(new ObjectId(req.params.id))
       
       if (!user) {
-         res.send(httpStatusCodes.NOT_FOUND)
+         res.send(httpStatusCodes.NOT_FOUND_404)
          return
       }
-      res.status(httpStatusCodes.OK).send(user)
+      res.status(httpStatusCodes.OK_200).send(user)
    },
    async createUser(req:Request,res:Response){
       const userId = await usersCervice.createUser(req.body)
@@ -30,19 +30,19 @@ export const usersController = {
          
          const getCreatedUser = await queryUsersRepository.getUserById(new ObjectId(userId))
          
-         res.status(httpStatusCodes.CREATED).send(getCreatedUser)
+         res.status(httpStatusCodes.CREATED_201).send(getCreatedUser)
       }
       else{
-         res.status(httpStatusCodes.BAD_REQUEST).send(userId)
+         res.status(httpStatusCodes.BAD_REQUEST_400).send(userId)
          return
       }
    },
    async deleteUser(req:Request,res:Response){
       const deletedUser = await usersCervice.deletUser(req.params.id)
       if (!deletedUser) {
-         res.send(httpStatusCodes.NOT_FOUND)
+         res.send(httpStatusCodes.NOT_FOUND_404)
          return
       }
-      res.send(httpStatusCodes.NO_CONTENT)
+      res.send(httpStatusCodes.NO_CONTENT_204)
    }
 }
