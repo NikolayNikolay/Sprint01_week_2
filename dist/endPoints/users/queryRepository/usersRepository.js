@@ -29,5 +29,11 @@ exports.usersRepository = {
             const existinguserEmailOrLogin = yield mongo_db_1.usersCollection.findOne({ $or: [{ 'email': emailOrLogin }, { 'login': emailOrLogin }] });
             return existinguserEmailOrLogin;
         });
+    },
+    findUserById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const existingUser = yield mongo_db_1.usersCollection.findOne({ '_id': userId });
+            return existingUser;
+        });
     }
 };

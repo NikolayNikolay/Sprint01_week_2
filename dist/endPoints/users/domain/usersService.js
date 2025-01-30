@@ -12,31 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersCervice = void 0;
+exports.usersService = void 0;
 const mongodb_1 = require("mongodb");
-const usersRepository_1 = require("../queryRepository/usersRepository");
+const usersRepository_1 = require("../repository/usersRepository");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-exports.usersCervice = {
+exports.usersService = {
     createUser(reqBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUniqueEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.email);
+            const isUniqueEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.email, reqBody.login);
             if (isUniqueEmail) {
                 return {
                     "errorsMessages": [
                         {
-                            "message": "Existed Email",
-                            "field": "email"
-                        }
-                    ]
-                };
-            }
-            const isUniqueLogin = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.login);
-            if (isUniqueLogin) {
-                return {
-                    "errorsMessages": [
-                        {
-                            "message": "Existed Login",
-                            "field": "login"
+                            "message": "Existed Email or Login",
+                            "field": "email or login"
                         }
                     ]
                 };

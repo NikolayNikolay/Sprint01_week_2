@@ -25,6 +25,7 @@ export const commentsServise = {
       }
       return resultResponsObject(ResultStatus.SuccessNoContent,'SuccessNoContent')
    },
+   //
    async deleteComent(id:string,userId:string):Promise<ResponseObjectType>{
       const canBeDeleted = await commentsRepository.getOneCommentById(new ObjectId(id))
       if (!canBeDeleted) {

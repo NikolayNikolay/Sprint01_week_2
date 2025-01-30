@@ -33,7 +33,7 @@ exports.usersController = {
     },
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userId = yield usersService_1.usersCervice.createUser(req.body);
+            const userId = yield usersService_1.usersService.createUser(req.body);
             if (typeof userId === 'string') {
                 const getCreatedUser = yield queryUsersRepository_1.queryUsersRepository.getUserById(new mongodb_1.ObjectId(userId));
                 res.status(settings_1.httpStatusCodes.CREATED_201).send(getCreatedUser);
@@ -46,7 +46,7 @@ exports.usersController = {
     },
     deleteUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedUser = yield usersService_1.usersCervice.deletUser(req.params.id);
+            const deletedUser = yield usersService_1.usersService.deletUser(req.params.id);
             if (!deletedUser) {
                 res.send(settings_1.httpStatusCodes.NOT_FOUND_404);
                 return;

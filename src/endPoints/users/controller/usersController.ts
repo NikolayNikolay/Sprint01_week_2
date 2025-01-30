@@ -4,7 +4,7 @@ import { PaginationQueryParams } from "../../../helpers/queryParamsPaginations";
 import { queryUsersRepository } from "../queryRepository/queryUsersRepository";
 import { mapViewUsersModel } from "../../../helpers/viewModelsMapMethod";
 import { httpStatusCodes } from "../../../settings";
-import { usersCervice } from "../domain/usersService";
+import { usersService } from "../domain/usersService";
 import { ObjectId } from "mongodb";
 
 
@@ -25,7 +25,7 @@ export const usersController = {
       res.status(httpStatusCodes.OK_200).send(user)
    },
    async createUser(req:Request,res:Response){
-      const userId = await usersCervice.createUser(req.body)
+      const userId = await usersService.createUser(req.body)
       if (typeof userId === 'string') {
          
          const getCreatedUser = await queryUsersRepository.getUserById(new ObjectId(userId))
@@ -38,7 +38,7 @@ export const usersController = {
       }
    },
    async deleteUser(req:Request,res:Response){
-      const deletedUser = await usersCervice.deletUser(req.params.id)
+      const deletedUser = await usersService.deletUser(req.params.id)
       if (!deletedUser) {
          res.send(httpStatusCodes.NOT_FOUND_404)
          return

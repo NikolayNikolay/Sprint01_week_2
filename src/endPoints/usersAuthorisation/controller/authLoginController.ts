@@ -4,6 +4,9 @@ import { authUserService } from "../domain/authLoginServise";
 import { ResultStatus } from "../../../enums/resultStatus";
 import { resultStatusToHttpStatusCode } from "../../../helpers/resultStatusToHttpStatusCode";
 import { jwtServise } from "../applications/jwtServises";
+import { usersService } from "../../users/domain/usersService";
+import { usersRepository } from "../../users/repository/usersRepository";
+import { ObjectId } from "mongodb";
 
 
 
@@ -15,7 +18,6 @@ export const authLoginController = {
          res.sendStatus(resultStatusToHttpStatusCode(authUser.status))
          return
       }
-      
       const token = await jwtServise.generateJwtToken(authUser.data!)
       res.status(resultStatusToHttpStatusCode(authUser.status)).send(token)
    },
@@ -25,5 +27,19 @@ export const authLoginController = {
          return
       }
       res.status(httpStatusCodes.OK_200).send(req.user)
+   },
+   async rigistrationUser(req:Request, res:Response){
+      const resultRegistration = await authUserService.registerUser(req.body)
+      console.log(resultRegistration);
+      
+      res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration)
+   },
+   async registrationConfirmation(req:Request, res:Response){
+      const confirmationResult = await authUserService.confirmationUser(req.body)
+      res.status(resultStatusToHttpStatusCode(confirmationResult.status)).send(confirmationResult.errors)
+   },
+   async resendingEmailForConfirmation(req:Request, res:Response){
+      const resendingEmailResult = await authUserService.emailResendingForConfirmation(req.body)
+      res.status(resultStatusToHttpStatusCode(resendingEmailResult.status)).send(resendingEmailResult.errors)
    }
 }

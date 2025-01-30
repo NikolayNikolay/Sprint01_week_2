@@ -35,5 +35,24 @@ exports.authLoginController = {
             }
             res.status(settings_1.httpStatusCodes.OK_200).send(req.user);
         });
+    },
+    rigistrationUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const resultRegistration = yield authLoginServise_1.authUserService.registerUser(req.body);
+            console.log(resultRegistration);
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration);
+        });
+    },
+    registrationConfirmation(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const confirmationResult = yield authLoginServise_1.authUserService.confirmationUser(req.body);
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status)).send(confirmationResult.errors);
+        });
+    },
+    resendingEmailForConfirmation(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const resendingEmailResult = yield authLoginServise_1.authUserService.emailResendingForConfirmation(req.body);
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status)).send(resendingEmailResult.errors);
+        });
     }
 };

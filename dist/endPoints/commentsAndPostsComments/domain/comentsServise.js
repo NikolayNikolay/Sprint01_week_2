@@ -31,6 +31,7 @@ exports.commentsServise = {
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'SuccessNoContent');
         });
     },
+    //
     deleteComent(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const canBeDeleted = yield commentsRepository_1.commentsRepository.getOneCommentById(new mongodb_1.ObjectId(id));

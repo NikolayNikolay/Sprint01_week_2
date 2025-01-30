@@ -1,10 +1,13 @@
 import { ObjectId } from "mongodb"
+import { EmailConfirmation } from "../../usersAuthorisation/models/UserRegistrationConfimationModel"
 
 export type UserViewModel= {
-   id: string
+   id?: string
    login: string
    email: string
    createdAt: string
+   password?: string
+   emailConfirmation?:EmailConfirmation
 }
 
 export type PaginationQueryUsersType = { 
@@ -16,9 +19,6 @@ export type PaginationQueryUsersType = {
 }
 
 
-export type UserViewModelWith_id = {
+export type UserViewModelWith_id = UserViewModel &  {
    _id: ObjectId
-   login: string
-   email: string
-   createdAt: string
 }
