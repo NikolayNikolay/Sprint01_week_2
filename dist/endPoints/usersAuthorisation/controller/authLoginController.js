@@ -30,7 +30,7 @@ exports.authLoginController = {
     getInformationOfMe(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!req.user) {
-                res.status(settings_1.httpStatusCodes.UNAUTHORIZED_401);
+                res.send(settings_1.httpStatusCodes.UNAUTHORIZED_401);
                 return;
             }
             res.status(settings_1.httpStatusCodes.OK_200).send(req.user);
@@ -42,8 +42,9 @@ exports.authLoginController = {
             const resultRegistration = yield authLoginServise_1.authUserService.registerUser(req.body);
             if ((_a = resultRegistration.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
                 res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration.errors);
+                return;
             }
-            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration);
+            res.send((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status));
         });
     },
     registrationConfirmation(req, res) {
@@ -52,8 +53,9 @@ exports.authLoginController = {
             const confirmationResult = yield authLoginServise_1.authUserService.confirmationUser(req.body);
             if ((_a = confirmationResult.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
                 res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status)).send(confirmationResult.errors);
+                return;
             }
-            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status));
+            res.send((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status));
         });
     },
     resendingEmailForConfirmation(req, res) {
@@ -62,8 +64,9 @@ exports.authLoginController = {
             const resendingEmailResult = yield authLoginServise_1.authUserService.emailResendingForConfirmation(req.body);
             if ((_a = resendingEmailResult.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
                 res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status)).send(resendingEmailResult.errors);
+                return;
             }
-            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status));
+            res.send((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status));
         });
     }
 };

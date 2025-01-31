@@ -94,9 +94,8 @@ exports.authUserService = {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not email in body", field: "email" }] });
             }
             const getUser = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(userEmail.email);
-            console.log((getUser === null || getUser === void 0 ? void 0 : getUser.email) === userEmail.email);
             if (!getUser) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "email" }] });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found user", field: "email" }] });
             }
             if (getUser.emailConfirmation.isConfirmed) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
@@ -110,7 +109,6 @@ exports.authUserService = {
             catch (err) {
                 console.error(err);
             }
-            console.log(renewConfirmCodeInUser.emailConfirmation.confirmationCode === getUser.emailConfirmation.confirmationCode);
             if (renewConfirmCodeInUser.emailConfirmation.confirmationCode === getUser.emailConfirmation.confirmationCode) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] });
             }

@@ -87,7 +87,7 @@ export const authUserService = {
       }
       // update confirm field
       const updateConfirmation = await usersRepository.updateSomeDataValueUser({'_id': new ObjectId(getUserByConfirmCode._id) },'emailConfirmation.isConfirmed', true)
-
+      
 
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content',)
 
@@ -97,10 +97,9 @@ export const authUserService = {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not email in body", field: "email" }] })
       }
       const getUser = await usersRepository.findUserByEmailOrLogin(userEmail.email)
-      console.log(getUser?.email === userEmail.email);
       
       if (!getUser) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "email" }] })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found user", field: "email" }] })
       }
 
       if (getUser.emailConfirmation.isConfirmed) {
@@ -115,7 +114,6 @@ export const authUserService = {
       } catch (err) {
          console.error(err);
       }
-      console.log(renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode);
       
       if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
