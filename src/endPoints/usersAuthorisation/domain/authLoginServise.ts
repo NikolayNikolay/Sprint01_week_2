@@ -90,7 +90,6 @@ export const authUserService = {
       
 
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content',)
-
    },
    async emailResendingForConfirmation(userEmail:RegistrationEmail):Promise<ResponseObjectType>{
       if (!userEmail.email) {
