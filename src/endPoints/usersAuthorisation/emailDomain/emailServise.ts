@@ -13,7 +13,7 @@ export const emailServise ={
        try {
            const result = await transporter.sendMail({
            from: '"Blog Platform" <modovod228@gmail.com>', // sender address
-           to: 'kynunpodau2@gmail.com', // list of receivers
+           to: `${email}`, // list of receivers
            subject: "Confimation Code", // Subject line
            text:`<h1>Thank for your registration</h1>
            <p>To finish registration please follow the link below:

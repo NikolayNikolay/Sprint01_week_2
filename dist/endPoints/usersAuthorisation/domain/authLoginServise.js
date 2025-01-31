@@ -67,10 +67,10 @@ exports.authUserService = {
     confirmationUser(uuIdCode) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!uuIdCode.code) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "code" }] });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not code in body", field: "code" }] });
             }
             const getUserByConfirmCode = yield usersRepository_1.usersRepository.findUserWithEmailConfirmation({ 'emailConfirmation.confirmationCode': uuIdCode.code });
-            // check is valid uuId 
+            // check is existing user by uuId 
             if (!getUserByConfirmCode) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "code" }] });
             }
@@ -88,10 +88,13 @@ exports.authUserService = {
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
     },
-    emailResendingForConfirmation(UserEmail) {
+    emailResendingForConfirmation(userEmail) {
         return __awaiter(this, void 0, void 0, function* () {
-            const getUser = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(UserEmail.email);
-            console.log((getUser === null || getUser === void 0 ? void 0 : getUser.email) === UserEmail.email);
+            if (!userEmail.email) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not email in body", field: "email" }] });
+            }
+            const getUser = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(userEmail.email);
+            console.log((getUser === null || getUser === void 0 ? void 0 : getUser.email) === userEmail.email);
             if (!getUser) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "email" }] });
             }
@@ -102,7 +105,7 @@ exports.authUserService = {
             const renewConfirmCodeInUser = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': getUser._id }, 'emailConfirmation.confirmationCode', confirmationCode);
             console.log(renewConfirmCodeInUser, getUser);
             try {
-                yield emailServise_1.emailServise.sendEmail(UserEmail.email, confirmationCode);
+                yield emailServise_1.emailServise.sendEmail(userEmail.email, confirmationCode);
             }
             catch (err) {
                 console.error(err);

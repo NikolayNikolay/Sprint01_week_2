@@ -66,11 +66,11 @@ export const authUserService = {
    },
    async confirmationUser(uuIdCode:RegistrationConfirmationCodeModel){
       if (!uuIdCode.code) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "code" }] })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not code in body", field: "code" }] })
       }
       const getUserByConfirmCode = await usersRepository.findUserWithEmailConfirmation({'emailConfirmation.confirmationCode' : uuIdCode.code})
       
-      // check is valid uuId 
+      // check is existing user by uuId 
       if (!getUserByConfirmCode) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "code" }] })
       }
@@ -92,9 +92,12 @@ export const authUserService = {
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content',)
 
    },
-   async emailResendingForConfirmation(UserEmail:RegistrationEmail):Promise<ResponseObjectType>{
-      const getUser = await usersRepository.findUserByEmailOrLogin(UserEmail.email)
-      console.log(getUser?.email === UserEmail.email);
+   async emailResendingForConfirmation(userEmail:RegistrationEmail):Promise<ResponseObjectType>{
+      if (!userEmail.email) {
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not email in body", field: "email" }] })
+      }
+      const getUser = await usersRepository.findUserByEmailOrLogin(userEmail.email)
+      console.log(getUser?.email === userEmail.email);
       
       if (!getUser) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "email" }] })
@@ -108,7 +111,7 @@ export const authUserService = {
       console.log(renewConfirmCodeInUser, getUser);
       
       try {
-         await emailServise.sendEmail(UserEmail.email,confirmationCode)
+         await emailServise.sendEmail(userEmail.email,confirmationCode)
       } catch (err) {
          console.error(err);
       }
