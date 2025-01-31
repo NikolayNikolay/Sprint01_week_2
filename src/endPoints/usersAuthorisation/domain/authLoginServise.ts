@@ -46,7 +46,7 @@ export const authUserService = {
             confirmationCode: randomUUID(),
             expirationDate: add(new Date(), {
                // hours: 1,
-               minutes: 1,
+               minutes: 30,
             }),
             isConfirmed: false
         }
@@ -105,19 +105,19 @@ export const authUserService = {
       if (getUser.emailConfirmation.isConfirmed) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] })
       }
-      const confirmationCode = randomUUID()
-      const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
-      console.log(renewConfirmCodeInUser, getUser);
+      // const confirmationCode = randomUUID()
+      // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
+      // console.log(renewConfirmCodeInUser, getUser);
       
       try {
-         await emailServise.sendEmail(userEmail.email,confirmationCode)
+         await emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }
       
-      if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
-      }
+      // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
+      //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
+      // }
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
    }
 }

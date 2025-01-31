@@ -46,7 +46,7 @@ exports.authUserService = {
                     confirmationCode: (0, crypto_1.randomUUID)(),
                     expirationDate: (0, add_1.add)(new Date(), {
                         // hours: 1,
-                        minutes: 1,
+                        minutes: 30,
                     }),
                     isConfirmed: false
                 } });
@@ -100,18 +100,18 @@ exports.authUserService = {
             if (getUser.emailConfirmation.isConfirmed) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
             }
-            const confirmationCode = (0, crypto_1.randomUUID)();
-            const renewConfirmCodeInUser = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': getUser._id }, 'emailConfirmation.confirmationCode', confirmationCode);
-            console.log(renewConfirmCodeInUser, getUser);
+            // const confirmationCode = randomUUID()
+            // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
+            // console.log(renewConfirmCodeInUser, getUser);
             try {
-                yield emailServise_1.emailServise.sendEmail(userEmail.email, confirmationCode);
+                yield emailServise_1.emailServise.sendEmail(getUser.email, getUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);
             }
-            if (renewConfirmCodeInUser.emailConfirmation.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] });
-            }
+            // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
+            //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
+            // }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
     }
