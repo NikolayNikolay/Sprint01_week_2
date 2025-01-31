@@ -8,8 +8,8 @@ const imputCheckErrorsMiddleware_1 = require("../../../middleweares/imputCheckEr
 const authMidllewarer_1 = require("../midllewarers/authMidllewarer");
 const usersValidator_1 = require("../../users/validators/usersValidator");
 exports.authLoginRouter = (0, express_1.Router)();
-exports.authLoginRouter.post('/login', authInputValidators_1.userPasswordValidations, authInputValidators_1.userloginOrEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.authLoginPost);
+exports.authLoginRouter.post('/login', usersValidator_1.usersPasswordValidations, authInputValidators_1.userloginOrEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.authLoginPost);
 exports.authLoginRouter.get('/me', authMidllewarer_1.authenticateUser, authLoginController_1.authLoginController.getInformationOfMe);
-exports.authLoginRouter.post('/registration', authInputValidators_1.userPasswordValidations, usersValidator_1.usersLoginValidations, usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.rigistrationUser);
+exports.authLoginRouter.post('/registration', usersValidator_1.usersPasswordValidations, usersValidator_1.usersLoginValidations, usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.rigistrationUser);
 exports.authLoginRouter.post('/registration-confirmation', authLoginController_1.authLoginController.registrationConfirmation);
 exports.authLoginRouter.post('/registration-email-resending', usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.resendingEmailForConfirmation);

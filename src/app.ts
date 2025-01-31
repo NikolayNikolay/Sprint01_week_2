@@ -39,34 +39,6 @@ app.use(SETTINGS.PATH.posts, postsCommentsRouter)
 app.delete(SETTINGS.PATH.dellAllData, deletAllDataController )
 
 
-
-app.post("/sendEmail",async(req:Request, res:Response) => {
-      const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-              user: "modovod228@gmail.com",
-              pass: "nopg yxnp exiw cetd",
-            },
-          });
-          try {
-              const result = await transporter.sendMail({
-              from: '"BOOOOOOOO!!!!!!!! 👻" <modovod228@gmail.com>', // sender address
-              to: "ulianau67@gmail.com", // list of receivers
-              subject: "Hello Baby✔", // Subject line
-              text: "Guess, is this?", // plain text body
-              html: "<b>Hello world?</b>", // html body
-              })
-              console.log(result);
-              
-          } 
-          catch (err) {
-            console.error(err);
-            
-          }
-      res.sendStatus(200)
-})
-
-
 app.get('/', (req:Request, res:Response) => {
       // эндпоинт, который будет показывать на верселе какая версия бэкэнда сейчас залита
       res.status(200).json({version: '1.0'})

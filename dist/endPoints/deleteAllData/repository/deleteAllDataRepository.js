@@ -15,6 +15,7 @@ const deleteAllDataBaseRepositoriry = () => __awaiter(void 0, void 0, void 0, fu
     const resultAllBlogsDel = yield mongo_db_1.blogCollection.deleteMany({});
     const resultAllPostsDel = yield mongo_db_1.postCollection.deleteMany({});
     const resultAllUsersDel = yield mongo_db_1.usersCollection.deleteMany({});
+    const resultAllCommentsDel = yield mongo_db_1.commentsCollection.deleteMany({});
     return [resultAllBlogsDel.acknowledged, resultAllPostsDel.acknowledged, resultAllUsersDel.acknowledged];
 });
 exports.deleteAllDataBaseRepositoriry = deleteAllDataBaseRepositoriry;
