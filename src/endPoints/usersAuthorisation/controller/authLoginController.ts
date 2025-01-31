@@ -23,7 +23,7 @@ export const authLoginController = {
    },
    async getInformationOfMe(req:Request, res:Response){
       if (!req.user) {
-         res.status(httpStatusCodes.UNAUTHORIZED_401)
+         res.send(httpStatusCodes.UNAUTHORIZED_401)
          return
       }
       res.status(httpStatusCodes.OK_200).send(req.user)
@@ -32,21 +32,24 @@ export const authLoginController = {
       const resultRegistration = await authUserService.registerUser(req.body)
       if (resultRegistration.errors?.errorsMessages.length) {
          res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration.errors)
+         return
       }
-      res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration)
+      res.send(resultStatusToHttpStatusCode(resultRegistration.status))
    },
    async registrationConfirmation(req:Request, res:Response){
       const confirmationResult = await authUserService.confirmationUser(req.body)
       if (confirmationResult.errors?.errorsMessages.length) {
          res.status(resultStatusToHttpStatusCode(confirmationResult.status)).send(confirmationResult.errors)
+         return
       }
-      res.status(resultStatusToHttpStatusCode(confirmationResult.status))
+      res.send(resultStatusToHttpStatusCode(confirmationResult.status))
    },
    async resendingEmailForConfirmation(req:Request, res:Response){
       const resendingEmailResult = await authUserService.emailResendingForConfirmation(req.body)
       if (resendingEmailResult.errors?.errorsMessages.length) {
          res.status(resultStatusToHttpStatusCode(resendingEmailResult.status)).send(resendingEmailResult.errors)
+         return
       }
-      res.status(resultStatusToHttpStatusCode(resendingEmailResult.status))
+      res.send( resultStatusToHttpStatusCode(resendingEmailResult.status))
    }
 }
