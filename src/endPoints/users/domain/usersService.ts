@@ -8,13 +8,24 @@ import { add } from "date-fns";
 
 export const usersService = {
    async createUser (reqBody:UserInputModel):Promise<any>{
-      const isUniqueEmail = await usersRepository.findUserByEmailOrLogin(reqBody.email,reqBody.login)
+      const isUniqueEmail = await usersRepository.findUserByEmailOrLogin(reqBody.email)
       if (isUniqueEmail ) {
          return {
             "errorsMessages": [
               {
-               "message": "Existed Email or Login",
-               "field": "email or login"
+               "message": "Existed Email",
+               "field": "email"
+              }
+            ]
+          }
+      }
+      const isUniqueLogin = await usersRepository.findUserByEmailOrLogin(reqBody.login)
+      if (isUniqueEmail ) {
+         return {
+            "errorsMessages": [
+              {
+               "message": "Existed Login",
+               "field": "login"
               }
             ]
           }

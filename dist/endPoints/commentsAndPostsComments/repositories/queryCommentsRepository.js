@@ -19,7 +19,7 @@ exports.queryCommentsRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const findById = yield mongo_db_1.commentsCollection.findOne({ _id: id });
             if (!findById) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { field: 'id', message: 'incorrect Id' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'incorrect Id', field: 'id' }] });
             }
             const mapCommentViewModel = (0, viewModelsMapMethod_1.mapViewCommentsModel)(findById);
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', mapCommentViewModel);

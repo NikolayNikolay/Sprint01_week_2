@@ -19,14 +19,14 @@ exports.commentsServise = {
         return __awaiter(this, void 0, void 0, function* () {
             const canBeUpdate = yield commentsRepository_1.commentsRepository.getOneCommentById(new mongodb_1.ObjectId(commentId));
             if (!canBeUpdate) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { field: 'commentId', message: 'incorrect Id' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'incorrect Id', field: 'commentId' }] });
             }
             if (canBeUpdate.commentatorInfo.userId !== userId) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Forbidden, 'Forbidden', null, { field: 'commentId', message: 'Forbidden act' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Forbidden, 'Forbidden', null, { errorsMessages: [{ message: 'Forbidden act', field: 'commentId' }] });
             }
             const resultUpdate = yield commentsRepository_1.commentsRepository.updateCommentbyId(input, new mongodb_1.ObjectId(commentId));
             if (!resultUpdate) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { field: 'input data', message: 'somthing wrong' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: 'somthing wrong', field: 'input data' }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'SuccessNoContent');
         });
@@ -36,14 +36,14 @@ exports.commentsServise = {
         return __awaiter(this, void 0, void 0, function* () {
             const canBeDeleted = yield commentsRepository_1.commentsRepository.getOneCommentById(new mongodb_1.ObjectId(id));
             if (!canBeDeleted) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { field: 'commentId', message: 'incorrect Id' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'incorrect Id', field: 'commentId' }] });
             }
             if (canBeDeleted.commentatorInfo.userId !== userId) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Forbidden, 'Forbidden', null, { field: 'commentId', message: 'Forbidden act' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Forbidden, 'Forbidden', null, { errorsMessages: [{ message: 'Forbidden act', field: 'commentId' }] });
             }
             const deletedResult = yield commentsRepository_1.commentsRepository.deleteCommentbyId(new mongodb_1.ObjectId(id));
             if (!deletedResult) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { field: 'input data', message: 'somthing wrong' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'somthing wrong', field: 'somthing wrong' }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'SuccessNoContent');
         });

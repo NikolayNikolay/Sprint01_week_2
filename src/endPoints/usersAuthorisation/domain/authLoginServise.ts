@@ -17,26 +17,27 @@ import { RegistrationEmail } from "../models/RegistrationEmailResendingModel";
 
 export const authUserService = {
    async authorizationCheck(authData:LoginInputModelType):Promise<ResponseObjectType<UserViewModelWith_id | null>>{
-      const user = await usersRepository.findUserByEmailOrLogin(authData.loginOrEmail,authData.loginOrEmail)
+      const user = await usersRepository.findUserByEmailOrLogin(authData.loginOrEmail)
       if (!user) {
-         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{message: 'invalid Password or Email',
-            field	: 'Password or Email'})
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] })
       }
+
       const checkPssword = await usersService._comparePassword(authData.password, user.password)
       if (!checkPssword) {
-         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{message: 'invalid Password or Email',
-            field	: 'Password or Email'})
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] })
       }
       return resultResponsObject(ResultStatus.Success,'Success',user)
    },
    //
    async registerUser(regisData:UserInputModel):Promise<ResponseObjectType>{
-      const user = await usersRepository.findUserByEmailOrLogin(regisData.email,regisData.login)
+      const unickEmail = await usersRepository.findUserByEmailOrLogin(regisData.email)
       
-      if (user) return resultResponsObject(ResultStatus.BadRequest,'Bad request',null,{
-         "message": "Existed Email or Login",
-         "field": "email or login"
-        })
+      if (unickEmail) return resultResponsObject(ResultStatus.BadRequest,'Bad request',null,{ errorsMessages: [{ message: 'Existed Email', field: 'email' }] })
+
+      const unickLogin = await usersRepository.findUserByEmailOrLogin(regisData.login)
+
+      if (unickLogin) return resultResponsObject(ResultStatus.BadRequest,'Bad request',null,{ errorsMessages: [{ message: 'Existed Login', field: 'login' }] })
+
       const newUser = {
          ...regisData,
          password: await usersService._createHashPassword(regisData.password),
@@ -65,36 +66,24 @@ export const authUserService = {
    },
    async confirmationUser(uuIdCode:RegistrationConfirmationCodeModel){
       if (!uuIdCode.code) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "Not found",
-            "field": "code"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "code" }] })
       }
       const getUserByConfirmCode = await usersRepository.findUserWithEmailConfirmation({'emailConfirmation.confirmationCode' : uuIdCode.code})
       
       // check is valid uuId 
       if (!getUserByConfirmCode) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "Not found",
-            "field": "code"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "code" }] })
       }
       
       //check is alredy confirmed
       if (getUserByConfirmCode!.emailConfirmation!.isConfirmed) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "Already been confirmed",
-            "field": "code"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "is alredy confirmed", field: "code" }] })
       }
       // check experation date, must be last in the list
       const checkExpirationDate = isBefore(getUserByConfirmCode!.emailConfirmation!.expirationDate, new Date())
       
       if (checkExpirationDate) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "Expired",
-            "field": "code"
-         })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Expired", field: "code" }] })
       }
       // update confirm field
       const updateConfirmation = await usersRepository.updateSomeDataValueUser({'_id': new ObjectId(getUserByConfirmCode._id) },'emailConfirmation.isConfirmed', true)
@@ -108,17 +97,11 @@ export const authUserService = {
       console.log(getUser?.email === UserEmail.email);
       
       if (!getUser) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "Not found",
-            "field": "email"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not found", field: "email" }] })
       }
 
       if (getUser.emailConfirmation.isConfirmed) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "alredy confirmed",
-            "field": "email"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] })
       }
       const confirmationCode = randomUUID()
       const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
@@ -132,10 +115,7 @@ export const authUserService = {
       console.log(renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode);
       
       if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, {
-            "message": "some wrong with code",
-            "field": "confirm code"
-          })
+         return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
       }
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
    }

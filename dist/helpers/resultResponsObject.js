@@ -6,7 +6,7 @@ const resultResponsObject = (statusCode, errMessage, data, errArray) => {
         status: statusCode,
         message: errMessage,
         data: data ? data : null,
-        errors: errArray ? [errArray] : []
+        errors: errArray
     };
 };
 exports.resultResponsObject = resultResponsObject;

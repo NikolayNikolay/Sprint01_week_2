@@ -14,7 +14,7 @@ export const queryCommentsRepository= {
    async getOneCommentById(id:ObjectId):Promise<ResponseObjectType< CommentViewModel | null >>{
       const findById = await commentsCollection.findOne({_id:id})
       if (!findById) {
-         return resultResponsObject(ResultStatus.NotFound,'Not Found', null, {field:'id', message:'incorrect Id'})
+         return resultResponsObject(ResultStatus.NotFound,'Not Found', null,{ errorsMessages: [{ message: 'incorrect Id', field: 'id' }]})
       }
       const mapCommentViewModel = mapViewCommentsModel(findById)
       return resultResponsObject(ResultStatus.Success,'Success', mapCommentViewModel)

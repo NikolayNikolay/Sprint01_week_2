@@ -13,9 +13,9 @@ export const emailServise ={
        try {
            const result = await transporter.sendMail({
            from: '"Blog Platform" <modovod228@gmail.com>', // sender address
-           to: email, // list of receivers
+           to: 'kynunpodau2@gmail.com', // list of receivers
            subject: "Confimation Code", // Subject line
-           html:`<h1>Thank for your registration</h1>
+           text:`<h1>Thank for your registration</h1>
            <p>To finish registration please follow the link below:
               <a href='https://somesite.com/confirm-email?code=${confirmCode}'>complete registration</a>
            </p>` // plain text body

@@ -15,8 +15,8 @@ export const usersRepository = {
       const deletedUser = await usersCollection.deleteOne({'_id':userId})
       return deletedUser.deletedCount === 1
    },
-   async findUserByEmailOrLogin(email:string, login?:string){
-      const existingUserEmailOrLogin = await usersCollection.findOne({ $or: [ { 'email': email }, { 'login': login} ] })
+   async findUserByEmailOrLogin(emailOrLogin:string){
+      const existingUserEmailOrLogin = await usersCollection.findOne({ $or: [ { 'email': emailOrLogin }, { 'login': emailOrLogin} ] })
       return existingUserEmailOrLogin as any
    },
    async findUserById(userId:ObjectId){

@@ -16,7 +16,7 @@ import { CommentViewModel } from "../model/CommentViewModel";
 
 
 export const queryPostsCommentsRepositotory = {
-   async getAllcommentsForPost(queryParams:QueryParamsType, postId:string):Promise<ResponseObjectType<CommentViewModel[]>>{
+   async getAllcommentsForPost(queryParams:QueryParamsType, postId:string):Promise<ResponseObjectType<CommentViewModel[] | null>>{
       const checkPost = await postCollection.findOne({_id: new ObjectId(postId)})
       console.log(checkPost);
       if (!checkPost) {

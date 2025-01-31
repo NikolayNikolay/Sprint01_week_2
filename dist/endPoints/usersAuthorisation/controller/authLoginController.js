@@ -38,21 +38,32 @@ exports.authLoginController = {
     },
     rigistrationUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const resultRegistration = yield authLoginServise_1.authUserService.registerUser(req.body);
-            console.log(resultRegistration);
+            if ((_a = resultRegistration.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
+                res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration.errors);
+            }
             res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration);
         });
     },
     registrationConfirmation(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const confirmationResult = yield authLoginServise_1.authUserService.confirmationUser(req.body);
-            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status)).send(confirmationResult.errors);
+            if ((_a = confirmationResult.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
+                res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status)).send(confirmationResult.errors);
+            }
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(confirmationResult.status));
         });
     },
     resendingEmailForConfirmation(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const resendingEmailResult = yield authLoginServise_1.authUserService.emailResendingForConfirmation(req.body);
-            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status)).send(resendingEmailResult.errors);
+            if ((_a = resendingEmailResult.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
+                res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status)).send(resendingEmailResult.errors);
+            }
+            res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status));
         });
     }
 };

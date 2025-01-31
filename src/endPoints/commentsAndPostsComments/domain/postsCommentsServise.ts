@@ -15,7 +15,7 @@ export const postCommentsServise = {
       const checkPost = await postRepository.getById(new ObjectId(postId))
       
       if (!checkPost) {
-         return resultResponsObject(ResultStatus.NotFound,'Not Found post',null, {field:'postId', message:'not found'})
+         return resultResponsObject(ResultStatus.NotFound,'Not Found post',null, { errorsMessages: [{ message: 'not found', field: 'postId' }]})
       }
       const comment = {
          content: inputData.content,

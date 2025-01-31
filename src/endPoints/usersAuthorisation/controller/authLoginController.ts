@@ -30,16 +30,23 @@ export const authLoginController = {
    },
    async rigistrationUser(req:Request, res:Response){
       const resultRegistration = await authUserService.registerUser(req.body)
-      console.log(resultRegistration);
-      
+      if (resultRegistration.errors?.errorsMessages.length) {
+         res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration.errors)
+      }
       res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration)
    },
    async registrationConfirmation(req:Request, res:Response){
       const confirmationResult = await authUserService.confirmationUser(req.body)
-      res.status(resultStatusToHttpStatusCode(confirmationResult.status)).send(confirmationResult.errors)
+      if (confirmationResult.errors?.errorsMessages.length) {
+         res.status(resultStatusToHttpStatusCode(confirmationResult.status)).send(confirmationResult.errors)
+      }
+      res.status(resultStatusToHttpStatusCode(confirmationResult.status))
    },
    async resendingEmailForConfirmation(req:Request, res:Response){
       const resendingEmailResult = await authUserService.emailResendingForConfirmation(req.body)
-      res.status(resultStatusToHttpStatusCode(resendingEmailResult.status)).send(resendingEmailResult.errors)
+      if (resendingEmailResult.errors?.errorsMessages.length) {
+         res.status(resultStatusToHttpStatusCode(resendingEmailResult.status)).send(resendingEmailResult.errors)
+      }
+      res.status(resultStatusToHttpStatusCode(resendingEmailResult.status))
    }
 }

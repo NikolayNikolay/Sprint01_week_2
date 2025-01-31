@@ -19,13 +19,24 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 exports.usersService = {
     createUser(reqBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUniqueEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.email, reqBody.login);
+            const isUniqueEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.email);
             if (isUniqueEmail) {
                 return {
                     "errorsMessages": [
                         {
-                            "message": "Existed Email or Login",
-                            "field": "email or login"
+                            "message": "Existed Email",
+                            "field": "email"
+                        }
+                    ]
+                };
+            }
+            const isUniqueLogin = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.login);
+            if (isUniqueEmail) {
+                return {
+                    "errorsMessages": [
+                        {
+                            "message": "Existed Login",
+                            "field": "login"
                         }
                     ]
                 };

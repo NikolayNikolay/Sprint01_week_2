@@ -20,7 +20,7 @@ exports.postCommentsServise = {
         return __awaiter(this, void 0, void 0, function* () {
             const checkPost = yield postRepository_1.postRepository.getById(new mongodb_1.ObjectId(postId));
             if (!checkPost) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found post', null, { field: 'postId', message: 'not found' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found post', null, { errorsMessages: [{ message: 'not found', field: 'postId' }] });
             }
             const comment = {
                 content: inputData.content,

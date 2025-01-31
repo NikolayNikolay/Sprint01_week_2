@@ -22,15 +22,13 @@ const isBefore_1 = require("date-fns/isBefore");
 exports.authUserService = {
     authorizationCheck(authData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(authData.loginOrEmail, authData.loginOrEmail);
+            const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(authData.loginOrEmail);
             if (!user) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { message: 'invalid Password or Email',
-                    field: 'Password or Email' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] });
             }
             const checkPssword = yield usersService_1.usersService._comparePassword(authData.password, user.password);
             if (!checkPssword) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { message: 'invalid Password or Email',
-                    field: 'Password or Email' });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', user);
         });
@@ -38,12 +36,12 @@ exports.authUserService = {
     //
     registerUser(regisData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(regisData.email, regisData.login);
-            if (user)
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad request', null, {
-                    "message": "Existed Email or Login",
-                    "field": "email or login"
-                });
+            const unickEmail = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(regisData.email);
+            if (unickEmail)
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad request', null, { errorsMessages: [{ message: 'Existed Email', field: 'email' }] });
+            const unickLogin = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(regisData.login);
+            if (unickLogin)
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad request', null, { errorsMessages: [{ message: 'Existed Login', field: 'login' }] });
             const newUser = Object.assign(Object.assign({}, regisData), { password: yield usersService_1.usersService._createHashPassword(regisData.password), createdAt: new Date().toISOString(), emailConfirmation: {
                     confirmationCode: (0, crypto_1.randomUUID)(),
                     expirationDate: (0, add_1.add)(new Date(), {
@@ -69,33 +67,21 @@ exports.authUserService = {
     confirmationUser(uuIdCode) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!uuIdCode.code) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "Not found",
-                    "field": "code"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "code" }] });
             }
             const getUserByConfirmCode = yield usersRepository_1.usersRepository.findUserWithEmailConfirmation({ 'emailConfirmation.confirmationCode': uuIdCode.code });
             // check is valid uuId 
             if (!getUserByConfirmCode) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "Not found",
-                    "field": "code"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "code" }] });
             }
             //check is alredy confirmed
             if (getUserByConfirmCode.emailConfirmation.isConfirmed) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "Already been confirmed",
-                    "field": "code"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "is alredy confirmed", field: "code" }] });
             }
             // check experation date, must be last in the list
             const checkExpirationDate = (0, isBefore_1.isBefore)(getUserByConfirmCode.emailConfirmation.expirationDate, new Date());
             if (checkExpirationDate) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "Expired",
-                    "field": "code"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Expired", field: "code" }] });
             }
             // update confirm field
             const updateConfirmation = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': new mongodb_1.ObjectId(getUserByConfirmCode._id) }, 'emailConfirmation.isConfirmed', true);
@@ -107,16 +93,10 @@ exports.authUserService = {
             const getUser = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(UserEmail.email);
             console.log((getUser === null || getUser === void 0 ? void 0 : getUser.email) === UserEmail.email);
             if (!getUser) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "Not found",
-                    "field": "email"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "email" }] });
             }
             if (getUser.emailConfirmation.isConfirmed) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "alredy confirmed",
-                    "field": "email"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
             }
             const confirmationCode = (0, crypto_1.randomUUID)();
             const renewConfirmCodeInUser = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': getUser._id }, 'emailConfirmation.confirmationCode', confirmationCode);
@@ -129,10 +109,7 @@ exports.authUserService = {
             }
             console.log(renewConfirmCodeInUser.emailConfirmation.confirmationCode === getUser.emailConfirmation.confirmationCode);
             if (renewConfirmCodeInUser.emailConfirmation.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, {
-                    "message": "some wrong with code",
-                    "field": "confirm code"
-                });
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
