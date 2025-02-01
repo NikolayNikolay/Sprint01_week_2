@@ -58,7 +58,7 @@ export const authUserService = {
       }
       // if user created and is found, will send email confirmation.
       try {
-         emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
+        await emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }
@@ -115,7 +115,7 @@ export const authUserService = {
       //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
       // }
       try {
-         emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
+        await emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }

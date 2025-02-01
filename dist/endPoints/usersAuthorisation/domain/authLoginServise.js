@@ -56,7 +56,7 @@ exports.authUserService = {
             }
             // if user created and is found, will send email confirmation.
             try {
-                emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
+                yield emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);
@@ -111,7 +111,7 @@ exports.authUserService = {
             //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
             // }
             try {
-                emailServise_1.emailServise.sendEmail(getUser.email, getUser.emailConfirmation.confirmationCode);
+                yield emailServise_1.emailServise.sendEmail(getUser.email, getUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);
