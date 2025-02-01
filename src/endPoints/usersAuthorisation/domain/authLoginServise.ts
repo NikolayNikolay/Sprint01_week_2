@@ -115,7 +115,7 @@ export const authUserService = {
       //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
       // }
       try {
-         await emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
+         emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }
