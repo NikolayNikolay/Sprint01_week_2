@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 
 
 export const emailServise ={
-   async sendEmail(email:any,confirmCode:any){
+   sendEmail(email:any,confirmCode:any){
       const transporter = nodemailer.createTransport({
          service: 'gmail',
          auth: {
@@ -11,7 +11,7 @@ export const emailServise ={
          },
        });
        try {
-           const result = await transporter.sendMail({
+           const result = transporter.sendMail({
            from: '"Blog Platform" <modovod228@gmail.com>', // sender address
            to: `${email}`, // list of receivers
            subject: "Confimation Code", // Subject line
