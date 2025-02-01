@@ -100,17 +100,16 @@ exports.authUserService = {
             if (getUser.emailConfirmation.isConfirmed) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
             }
-            if (!getUser.emailConfirmation.isConfirmed) {
-                const confirmationCode = (0, crypto_1.randomUUID)();
-                const renewConfirmCodeInUser = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': getUser._id }, 'emailConfirmation.confirmationCode', confirmationCode);
-                try {
-                    yield emailServise_1.emailServise.sendEmail(getUser.email, confirmationCode);
-                }
-                catch (err) {
-                    console.error(err);
-                }
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
-            }
+            // if (!getUser.emailConfirmation.isConfirmed) {
+            //    const confirmationCode = randomUUID()
+            //    const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
+            //    try {
+            //       await emailServise.sendEmail(getUser.email,confirmationCode)
+            //    } catch (err) {
+            //       console.error(err);
+            //    }
+            //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
+            // }
             try {
                 yield emailServise_1.emailServise.sendEmail(getUser.email, getUser.emailConfirmation.confirmationCode);
             }
