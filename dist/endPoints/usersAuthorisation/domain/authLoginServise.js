@@ -56,7 +56,7 @@ exports.authUserService = {
             }
             // if user created and is found, will send email confirmation.
             try {
-                yield emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
+                emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);

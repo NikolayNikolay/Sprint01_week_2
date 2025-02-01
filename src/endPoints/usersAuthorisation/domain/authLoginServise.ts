@@ -58,7 +58,7 @@ export const authUserService = {
       }
       // if user created and is found, will send email confirmation.
       try {
-         await emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
+         emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }

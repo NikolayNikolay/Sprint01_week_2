@@ -11,7 +11,7 @@ export const emailServise ={
          },
        });
        try {
-           const result = transporter.sendMail({
+           const result = await transporter.sendMail({
            from: '"Blog Platform" <modovod228@gmail.com>', // sender address
            to: `${email}`, // list of receivers
            subject: "Confimation Code", // Subject line
