@@ -7,7 +7,7 @@ import { jwtServise } from "../applications/jwtServises";
 import { usersService } from "../../users/domain/usersService";
 import { usersRepository } from "../../users/repository/usersRepository";
 import { ObjectId } from "mongodb";
-
+const delay = (ms:number)=>new Promise(resolve=>setTimeout(resolve, ms))
 
 
 
@@ -30,6 +30,7 @@ export const authLoginController = {
    },
    async rigistrationUser(req:Request, res:Response){
       const resultRegistration = await authUserService.registerUser(req.body)
+      await delay(3000)
       if (resultRegistration.errors?.errorsMessages.length) {
          res.status(resultStatusToHttpStatusCode(resultRegistration.status)).send(resultRegistration.errors)
          return
@@ -46,10 +47,11 @@ export const authLoginController = {
    },
    async resendingEmailForConfirmation(req:Request, res:Response){
       const resendingEmailResult = await authUserService.emailResendingForConfirmation(req.body)
+      await delay(3000)
       if (resendingEmailResult.errors?.errorsMessages.length) {
          res.status(resultStatusToHttpStatusCode(resendingEmailResult.status)).send(resendingEmailResult.errors)
          return
       }
-      res.send( resultStatusToHttpStatusCode(resendingEmailResult.status))
+      res.sendStatus( resultStatusToHttpStatusCode(resendingEmailResult.status))
    }
 }

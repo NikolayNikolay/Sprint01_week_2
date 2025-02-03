@@ -2,6 +2,7 @@ import {app} from './app'
 import {mongoURI, SETTINGS} from './settings'
 import { runDB } from './db/mongo-db'
 import {config} from 'dotenv'
+import ngrok from 'ngrok';
 config()
 
 const startServer = async () => {
@@ -19,4 +20,3 @@ const startServer = async () => {
 if (process.env.NODE_ENV !== "test") {
     startServer();
 }
-

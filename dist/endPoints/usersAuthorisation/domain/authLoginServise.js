@@ -52,10 +52,12 @@ exports.authUserService = {
                 } });
             const createUserId = yield usersRepository_1.usersRepository.create(newUser);
             if (!createUserId) {
+                //500 err
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request');
             }
             // if user created and is found, will send email confirmation.
             try {
+                console.log('send email for confirm');
                 yield emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
@@ -100,18 +102,19 @@ exports.authUserService = {
             if (getUser.emailConfirmation.isConfirmed) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
             }
-            // if (!getUser.emailConfirmation.isConfirmed) {
-            //    const confirmationCode = randomUUID()
-            //    const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
-            //    try {
-            //       await emailServise.sendEmail(getUser.email,confirmationCode)
-            //    } catch (err) {
-            //       console.error(err);
-            //    }
-            //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
+            // const confirmationCode = randomUUID()
+            // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
+            // console.log(`resend email ${confirmationCode} - ${renewConfirmCodeInUser?.emailConfirmation?.confirmationCode} - ${getUser.emailConfirmation.confirmationCode}`);
+            // try {
+            //    console.log('call emailsender');
+            //    await emailServise.sendEmail(getUser.email,confirmationCode)
+            // } catch (err) {
+            //    console.error(err);
             // }
+            // return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
             try {
-                yield emailServise_1.emailServise.sendEmail(getUser.email, getUser.emailConfirmation.confirmationCode);
+                console.log('resend email' + userEmail.email);
+                yield emailServise_1.emailServise.sendEmail(userEmail.email, getUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);

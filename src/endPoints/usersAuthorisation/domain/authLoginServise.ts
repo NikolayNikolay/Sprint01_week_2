@@ -54,10 +54,13 @@ export const authUserService = {
       
       const createUserId = await usersRepository.create(newUser)
       if (!createUserId) {
+         //500 err
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request')
       }
       // if user created and is found, will send email confirmation.
       try {
+         console.log('send email for confirm');
+         
         await emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
@@ -104,18 +107,21 @@ export const authUserService = {
       if (getUser.emailConfirmation.isConfirmed) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] })
       }
-      // if (!getUser.emailConfirmation.isConfirmed) {
-      //    const confirmationCode = randomUUID()
-      //    const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
-      //    try {
-      //       await emailServise.sendEmail(getUser.email,confirmationCode)
-      //    } catch (err) {
-      //       console.error(err);
-      //    }
-      //    return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
-      // }
+         // const confirmationCode = randomUUID()
+         // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
+         // console.log(`resend email ${confirmationCode} - ${renewConfirmCodeInUser?.emailConfirmation?.confirmationCode} - ${getUser.emailConfirmation.confirmationCode}`);
+         // try {
+         //    console.log('call emailsender');
+            
+         //    await emailServise.sendEmail(getUser.email,confirmationCode)
+         // } catch (err) {
+         //    console.error(err);
+         // }
+         // return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
       try {
-        await emailServise.sendEmail(getUser.email,getUser.emailConfirmation.confirmationCode)
+         console.log('resend email' + userEmail.email);
+         
+         await emailServise.sendEmail(userEmail.email,getUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }

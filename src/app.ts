@@ -10,7 +10,7 @@ import { blogsRouter } from './endPoints/blogs/router/blogs-router';
 import { authLoginRouter } from './endPoints/usersAuthorisation/router/authLogin-router';
 import { commentsRouter } from './endPoints/commentsAndPostsComments/rourer/comments-router';
 import { postsCommentsRouter } from './endPoints/commentsAndPostsComments/rourer/postsCommentsRouter';
-import nodemailer from "nodemailer";
+
 
 export const app = express() // создать приложение
 app.use(express.json()) // создание свойств-объектов body и query во всех реквестах

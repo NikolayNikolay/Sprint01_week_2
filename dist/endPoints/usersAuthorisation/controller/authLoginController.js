@@ -15,6 +15,7 @@ const authLoginServise_1 = require("../domain/authLoginServise");
 const resultStatus_1 = require("../../../enums/resultStatus");
 const resultStatusToHttpStatusCode_1 = require("../../../helpers/resultStatusToHttpStatusCode");
 const jwtServises_1 = require("../applications/jwtServises");
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 exports.authLoginController = {
     authLoginPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,6 +41,7 @@ exports.authLoginController = {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const resultRegistration = yield authLoginServise_1.authUserService.registerUser(req.body);
+            yield delay(3000);
             if ((_a = resultRegistration.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
                 res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resultRegistration.status)).send(resultRegistration.errors);
                 return;
@@ -62,11 +64,12 @@ exports.authLoginController = {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const resendingEmailResult = yield authLoginServise_1.authUserService.emailResendingForConfirmation(req.body);
+            yield delay(3000);
             if ((_a = resendingEmailResult.errors) === null || _a === void 0 ? void 0 : _a.errorsMessages.length) {
                 res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status)).send(resendingEmailResult.errors);
                 return;
             }
-            res.send((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status));
+            res.sendStatus((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(resendingEmailResult.status));
         });
     }
 };
