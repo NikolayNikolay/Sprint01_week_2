@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15,26 +6,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.jwtServise = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const settings_1 = require("../../../settings");
+const convertSecretForJwt = Buffer.from(settings_1.SETTINGS.SECRET_KEY).toString('base64');
 exports.jwtServise = {
-    generateJwtToken(user) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const jwtToken = jsonwebtoken_1.default.sign({ userId: user._id.toString(), email: user.email,
-                name: user.login }, settings_1.SETTINGS.SECRET_KEY, { expiresIn: '1h' });
-            return {
-                accessToken: jwtToken
-            };
-        });
+    generateJwtTokens(user, sessionData) {
+        const jwtAccess = jsonwebtoken_1.default.sign({ user_id: user._id.toString() }, convertSecretForJwt, { expiresIn: '10s' });
+        const jwtRefresh = jsonwebtoken_1.default.sign({ user_id: user._id.toString(), iat: Math.floor(Date.now() / 1000), ip: sessionData === null || sessionData === void 0 ? void 0 : sessionData.ip,
+            device_name: sessionData === null || sessionData === void 0 ? void 0 : sessionData.device_name,
+            device_id: sessionData === null || sessionData === void 0 ? void 0 : sessionData.device_id }, convertSecretForJwt, { expiresIn: '10s' });
+        return {
+            accessToken: jwtAccess,
+            refreshToken: jwtRefresh
+        };
     },
-    checkJwtTokenUser(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const result = jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.SECRET_KEY);
-                return result;
+    checkJwtTokensUser(token) {
+        try {
+            const result = jsonwebtoken_1.default.verify(token, convertSecretForJwt);
+            if (!result || typeof result !== "object" || !result.user_id) {
+                return null;
             }
-            catch (error) {
-                console.log(error);
-                throw error;
-            }
-        });
+            return {
+                ip: result.ip ? result.ip : null,
+                device_name: result.device_name ? result.device_name : null,
+                device_id: result.device_id ? result.device_id : null,
+                user_id: result.user_id,
+                iat: result.iat,
+                exp: result.exp,
+            };
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
+    },
+    decodingJwt(token) {
+        const decoded = jsonwebtoken_1.default.decode(token);
+        if (!decoded)
+            return null; // Handle invalid tokens
+        return decoded;
     }
 };

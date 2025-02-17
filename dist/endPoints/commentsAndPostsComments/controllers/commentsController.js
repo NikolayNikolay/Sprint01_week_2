@@ -23,6 +23,7 @@ exports.commentsController = {
     },
     getOneCommentsById(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.params.id);
             const foundResult = yield queryCommentsRepository_1.queryCommentsRepository.getOneCommentById(new mongodb_1.ObjectId(req.params.id));
             res.status((0, resultStatusToHttpStatusCode_1.resultStatusToHttpStatusCode)(foundResult.status)).send(foundResult.data);
         });

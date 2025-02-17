@@ -5,5 +5,6 @@ export enum ResultStatus {
    Forbidden = 'Forbidden',
    Unathorized = 'Unathorized',
    BadRequest = 'BadRequest',
-   Created = 'Created'
+   Created = 'Created',
+   ServerError = '500'
 }

@@ -12,10 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAllDataBaseRepositoriry = void 0;
 const mongo_db_1 = require("../../../db/mongo-db");
 const deleteAllDataBaseRepositoriry = () => __awaiter(void 0, void 0, void 0, function* () {
-    const resultAllBlogsDel = yield mongo_db_1.blogCollection.deleteMany({});
-    const resultAllPostsDel = yield mongo_db_1.postCollection.deleteMany({});
-    const resultAllUsersDel = yield mongo_db_1.usersCollection.deleteMany({});
-    const resultAllCommentsDel = yield mongo_db_1.commentsCollection.deleteMany({});
-    return [resultAllBlogsDel.acknowledged, resultAllPostsDel.acknowledged, resultAllUsersDel.acknowledged];
+    // const resultAllBlogsDel = await blogCollection.deleteMany({});
+    // const resultAllPostsDel = await postCollection.deleteMany({});
+    // const resultAllUsersDel = await usersCollection.deleteMany({});
+    // const resultAllCommentsDel = await commentsCollection.deleteMany({});
+    const collections = yield mongo_db_1.db.listCollections().toArray();
+    for (const colletion of collections) {
+        yield mongo_db_1.db.collection(colletion.name).deleteMany({});
+    }
+    // return [resultAllBlogsDel.acknowledged , resultAllPostsDel.acknowledged,resultAllUsersDel.acknowledged]
 });
 exports.deleteAllDataBaseRepositoriry = deleteAllDataBaseRepositoriry;

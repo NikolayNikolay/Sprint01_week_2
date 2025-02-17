@@ -1,3 +1,6 @@
+import { DeviceDbModel, DeviceViewModel } from "../endPoints/securityDevices/models/DeviceViewModel"
+import { UserDbModel } from "../endPoints/users/models/UserDbModel"
+import { MeViewModel } from "../endPoints/usersAuthorisation/models/MeViewModel"
 
 
 export const mapViewBlogsModel = (data:any):any[] | any =>{
@@ -24,7 +27,6 @@ export const mapViewBlogsModel = (data:any):any[] | any =>{
       }
    }
 }
-
 export const mapViewPostsModel = (data:any):any[] | any=>{
    if (Array.isArray(data)) {
       return data.map((post:any)=>{
@@ -51,9 +53,6 @@ export const mapViewPostsModel = (data:any):any[] | any=>{
       }
    }
 }
-
-
-
 export const mapViewUsersModel = (data:any):any[] | any=>{
    if (Array.isArray(data)) {
       return data.map((post:any)=>{
@@ -74,7 +73,13 @@ export const mapViewUsersModel = (data:any):any[] | any=>{
       }
    }
 }
-
+export const mapMeViewModel = (data:UserDbModel):MeViewModel=>{
+      const {_id , ...item} = data
+      return { userId:_id.toString(),
+               login: item.login,
+               email: item.email,
+      }
+}
 export const mapViewCommentsModel = (data:any):any[] | any => {   
    if (Array.isArray(data)) {
       return data.map((comment:any)=>{
@@ -100,4 +105,16 @@ export const mapViewCommentsModel = (data:any):any[] | any => {
          createdAt:  item.createdAt
       }
    }
+}
+export const mapViewDeviceModel = (data:UserDbModel):DeviceViewModel[]=>{
+   const resultDeviceView = data.sessionDevice.map((session:DeviceDbModel)=>{
+      const {...device} = session
+      return{
+         ip:device.ip,
+         title:device.device_name,
+         lastActiveDate:device.iat.toString(),
+         deviceId:device.device_id,
+      }
+   })
+   return resultDeviceView
 }

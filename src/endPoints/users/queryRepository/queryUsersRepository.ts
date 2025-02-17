@@ -4,8 +4,9 @@ import { SortDirections } from "../../../enums/SortDirections.enum";
 import { QueryParamsType } from "../../../types/queryParams";
 import { PaginationQueryParams } from "../../../helpers/queryParamsPaginations";
 import { PaginationQueryUsersType } from "../models/UserViewModel";
-import { mapViewUsersModel } from "../../../helpers/viewModelsMapMethod";
+import { mapMeViewModel, mapViewUsersModel } from "../../../helpers/viewModelsMapMethod";
 import { filter } from "../../../helpers/serchFilter";
+import { MeViewModel } from "../../usersAuthorisation/models/MeViewModel";
 
 
 export const queryUsersRepository = {
@@ -32,9 +33,14 @@ export const queryUsersRepository = {
       }
    },
    async getUserById(idUser:ObjectId){
-      const user = await usersCollection.findOne({'_id':idUser})
+      const user = await usersCollection.findOne({'_id':new ObjectId(idUser)})
 
       return user ? mapViewUsersModel(user) : user
+   },
+   async getInformationOfMe(idUser:ObjectId):Promise<MeViewModel | null>{
+      const user = await usersCollection.findOne({'_id':new ObjectId(idUser)})
+            
+      return user ? mapMeViewModel(user) : user
    },
    async totalCount(params:any){
       const total = await usersCollection.countDocuments(params)

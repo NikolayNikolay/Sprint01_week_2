@@ -14,6 +14,8 @@ export const commentsController = {
       res.send(resultStatusToHttpStatusCode(updateResult.status))
    },
    async getOneCommentsById(req:Request,res:Response){
+      console.log(req.params.id);
+      
       const foundResult = await queryCommentsRepository.getOneCommentById(new ObjectId(req.params.id))
       res.status(resultStatusToHttpStatusCode(foundResult.status)).send(foundResult.data)
    },

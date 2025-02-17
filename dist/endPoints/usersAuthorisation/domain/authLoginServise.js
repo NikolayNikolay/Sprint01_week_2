@@ -19,8 +19,9 @@ const emailServise_1 = require("../emailDomain/emailServise");
 const crypto_1 = require("crypto");
 const add_1 = require("date-fns/add");
 const isBefore_1 = require("date-fns/isBefore");
+const jwtServises_1 = require("../applications/jwtServises");
 exports.authUserService = {
-    authorizationCheck(authData) {
+    authorizationCheck(authData, ip, device_name) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(authData.loginOrEmail);
             if (!user) {
@@ -30,7 +31,24 @@ exports.authUserService = {
             if (!checkPssword) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] });
             }
-            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', user);
+            if (!user.emailConfirmation.isConfirmed) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'Email not confirmed', field: 'emailConfirmati' }] });
+            }
+            // add logic session users with diferent units
+            let sessionData = {
+                ip,
+                device_name,
+                device_id: (0, crypto_1.randomUUID)(),
+                user_id: user._id.toString(),
+            };
+            const tokens = jwtServises_1.jwtServise.generateJwtTokens(user, sessionData);
+            const decodedAndTakeIssueAtandExp = jwtServises_1.jwtServise.decodingJwt(tokens.refreshToken);
+            sessionData = Object.assign({}, decodedAndTakeIssueAtandExp); // decoded data has what need to add in sessionDevice
+            console.log(sessionData);
+            // todo: add repository and puch ssesionData in field sessionDevice
+            const addSessionData = yield usersRepository_1.usersRepository.pushOrAddSomeDataValueUser({ '_id': new mongodb_1.ObjectId(user._id) }, 'sessionDevice', sessionData);
+            console.log(addSessionData);
+            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', tokens);
         });
     },
     //
@@ -49,7 +67,7 @@ exports.authUserService = {
                         minutes: 30,
                     }),
                     isConfirmed: false
-                } });
+                }, sessionDevice: [] });
             const createUserId = yield usersRepository_1.usersRepository.create(newUser);
             if (!createUserId) {
                 //500 err
@@ -122,6 +140,61 @@ exports.authUserService = {
             // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
             //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
             // }
+            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
+        });
+    },
+    userRefreshToken(user, deviceName, ipAddres) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const checkUser = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(user.user_id));
+            if (!checkUser) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid id', field: 'id' }] });
+            }
+            // check iat from token in user field sessionDevice
+            const isValidToken = checkUser.sessionDevice.find((session) => session.iat === user.iat && session.device_id === user.device_id);
+            console.log('servise to check iat   ', isValidToken, user, deviceName);
+            if (!isValidToken) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid token', field: 'token' }] });
+            }
+            console.log(isValidToken.device_name === deviceName);
+            if (isValidToken.device_name.toLowerCase() !== deviceName.toLowerCase()) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'unknown device', field: 'device' }] });
+            }
+            if (isValidToken.ip.toLowerCase() !== ipAddres.toLowerCase()) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'unknown ip', field: 'ip' }] });
+            }
+            const newPaerTokens = jwtServises_1.jwtServise.generateJwtTokens(checkUser, isValidToken);
+            if (!newPaerTokens.accessToken && !newPaerTokens.refreshToken) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, '500', null, { errorsMessages: [{ message: 'can not create', field: 'token' }] });
+            }
+            // after created new tokens decod refresh and update session iat and exp
+            const decodedSessionData = jwtServises_1.jwtServise.decodingJwt(newPaerTokens.refreshToken);
+            if (!decodedSessionData) {
+                throw new Error('decode is null');
+            }
+            const renewToken = yield usersRepository_1.usersRepository.updateSessionDeviceInformation({ '_id': new mongodb_1.ObjectId(user.user_id) }, decodedSessionData);
+            console.log('renew refrech token   ', isValidToken, renewToken);
+            if (!renewToken) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, '500', null, { errorsMessages: [{ message: 'some server error', field: 'token' }] });
+            }
+            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', newPaerTokens);
+        });
+    },
+    userLogOut(userId, sessionDeviceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const checkUser = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userId));
+            if (!checkUser) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid id', field: 'id' }] });
+            }
+            const isValidToken = checkUser.sessionDevice.find((session) => session.device_id === sessionDeviceId);
+            if (!isValidToken) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid token', field: 'token' }] });
+            }
+            const removeSession = yield usersRepository_1.usersRepository.removeSomeData({ '_id': new mongodb_1.ObjectId(checkUser._id) }, { sessionDevice: { device_id: sessionDeviceId } });
+            const checkUser2 = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userId));
+            console.log(checkUser2);
+            if (!removeSession) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, '500', null, { errorsMessages: [{ message: 'some server error', field: 'token' }] });
+            }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
     }

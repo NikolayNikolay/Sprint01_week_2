@@ -10,4 +10,5 @@ var ResultStatus;
     ResultStatus["Unathorized"] = "Unathorized";
     ResultStatus["BadRequest"] = "BadRequest";
     ResultStatus["Created"] = "Created";
+    ResultStatus["ServerError"] = "500";
 })(ResultStatus || (exports.ResultStatus = ResultStatus = {}));

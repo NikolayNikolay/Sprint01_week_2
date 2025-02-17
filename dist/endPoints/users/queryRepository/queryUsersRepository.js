@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.queryUsersRepository = void 0;
+const mongodb_1 = require("mongodb");
 const mongo_db_1 = require("../../../db/mongo-db");
 const queryParamsPaginations_1 = require("../../../helpers/queryParamsPaginations");
 const viewModelsMapMethod_1 = require("../../../helpers/viewModelsMapMethod");
@@ -41,8 +42,14 @@ exports.queryUsersRepository = {
     },
     getUserById(idUser) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield mongo_db_1.usersCollection.findOne({ '_id': idUser });
+            const user = yield mongo_db_1.usersCollection.findOne({ '_id': new mongodb_1.ObjectId(idUser) });
             return user ? (0, viewModelsMapMethod_1.mapViewUsersModel)(user) : user;
+        });
+    },
+    getInformationOfMe(idUser) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield mongo_db_1.usersCollection.findOne({ '_id': new mongodb_1.ObjectId(idUser) });
+            return user ? (0, viewModelsMapMethod_1.mapMeViewModel)(user) : user;
         });
     },
     totalCount(params) {

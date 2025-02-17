@@ -12,11 +12,13 @@
          users: '/users',
          authLogin:'/auth',
          comments:'/comments',
+         security:'/security',
          DATA_BASE_NAME:'Blogers_Platform',
          BLOG_COLLECTION_NAME:"blogs",
          POST_COLLECTION_NAME:"posts",
          USERS_COLLECTION_NAME:"users",
-         COMMENTS_COLLECTION_NAME: 'comments'
+         COMMENTS_COLLECTION_NAME: 'comments',
+         ALL_REQUESTS_API_COLLECTION_NAME: 'allRequestsApi'
       },
       SECRET_KEY : process.env.SECRET_KEY || 12345
 }

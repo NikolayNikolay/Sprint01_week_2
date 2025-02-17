@@ -10,4 +10,4 @@ const authMidllewarer_1 = require("../../usersAuthorisation/midllewarers/authMid
 exports.commentsRouter = (0, express_1.Router)();
 exports.commentsRouter.put('/:commentId', authMidllewarer_1.authenticateUser, commentsValidations_1.commentContentValidation, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, commentsController_1.commentsController.updateComments);
 exports.commentsRouter.delete('/:commentId', authMidllewarer_1.authenticateUser, commentsController_1.commentsController.deleteComments);
-exports.commentsRouter.get('/:id', paramsIdValidation_1.isValidObjectId, commentsController_1.commentsController.getOneCommentsById);
+exports.commentsRouter.get('/:id', paramsIdValidation_1.isValidObjectId, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, commentsController_1.commentsController.getOneCommentsById);

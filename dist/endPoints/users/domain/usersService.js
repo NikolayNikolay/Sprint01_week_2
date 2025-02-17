@@ -16,6 +16,8 @@ exports.usersService = void 0;
 const mongodb_1 = require("mongodb");
 const usersRepository_1 = require("../repository/usersRepository");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const crypto_1 = require("crypto");
+const date_fns_1 = require("date-fns");
 exports.usersService = {
     createUser(reqBody) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,7 +33,7 @@ exports.usersService = {
                 };
             }
             const isUniqueLogin = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(reqBody.login);
-            if (isUniqueEmail) {
+            if (isUniqueLogin) {
                 return {
                     "errorsMessages": [
                         {
@@ -42,7 +44,14 @@ exports.usersService = {
                 };
             }
             //create Hash Password
-            const user = Object.assign(Object.assign({}, reqBody), { password: yield this._createHashPassword(reqBody.password), createdAt: new Date().toISOString() });
+            const user = Object.assign(Object.assign({}, reqBody), { password: yield this._createHashPassword(reqBody.password), createdAt: new Date().toISOString(), emailConfirmation: {
+                    confirmationCode: (0, crypto_1.randomUUID)(),
+                    expirationDate: (0, date_fns_1.add)(new Date(), {
+                        // hours: 1,
+                        minutes: 30,
+                    }),
+                    isConfirmed: true
+                }, sessionDevice: [] });
             const createUserId = yield usersRepository_1.usersRepository.create(user);
             return createUserId;
         });
@@ -65,5 +74,5 @@ exports.usersService = {
             // const  hashedPassword = await this._createHashPassword(password)
             return yield bcrypt_1.default.compare(password, storedHash);
         });
-    },
+    }
 };

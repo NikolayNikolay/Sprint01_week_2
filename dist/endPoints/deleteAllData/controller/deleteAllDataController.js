@@ -16,10 +16,7 @@ const settings_1 = require("../../../settings");
 const deletAllDataController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.url === settings_1.SETTINGS.PATH.dellAllData) {
         const isEmptyBlogs = yield (0, deleteAllDataRepository_1.deleteAllDataBaseRepositoriry)();
-        if (isEmptyBlogs.length === 3) {
-            res.status(settings_1.httpStatusCodes.NO_CONTENT_204).send('All data is deleted');
-            return;
-        }
+        res.status(settings_1.httpStatusCodes.NO_CONTENT_204).send('All data is deleted');
     }
     else {
         res.send('Can not dellete all data , somthing went wrong!!!');

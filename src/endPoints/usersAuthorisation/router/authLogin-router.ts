@@ -3,7 +3,7 @@ import { SETTINGS } from "../../../settings";
 import { authLoginController } from "../controller/authLoginController";
 import { userloginOrEmailValidations } from "../validators/authInputValidators";
 import { inputCheckErrorsMiddleware } from "../../../middleweares/imputCheckErrorsMiddleware";
-import { authenticateUser } from "../midllewarers/authMidllewarer";
+import { authenticateUser, authRefreshToken } from "../midllewarers/authMidllewarer";
 import { usersLoginValidations, usersEmailValidations, usersPasswordValidations } from "../../users/validators/usersValidator";
 
 
@@ -17,4 +17,8 @@ authLoginRouter.get('/me',authenticateUser,authLoginController.getInformationOfM
 authLoginRouter.post('/registration',usersPasswordValidations,usersLoginValidations,usersEmailValidations,inputCheckErrorsMiddleware,authLoginController.rigistrationUser)
 authLoginRouter.post('/registration-confirmation',authLoginController.registrationConfirmation)
 authLoginRouter.post('/registration-email-resending',usersEmailValidations,inputCheckErrorsMiddleware,authLoginController.resendingEmailForConfirmation)
+authLoginRouter.post('/refresh-token',authRefreshToken,authLoginController.userRefreshToken)
+authLoginRouter.post('/logout',authRefreshToken,authLoginController.userLogOut)
+
+
 

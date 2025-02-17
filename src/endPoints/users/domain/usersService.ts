@@ -5,9 +5,11 @@ import bcrypt, { compare } from 'bcrypt';
 import { LoginInputModelType } from "../../usersAuthorisation/models/LoginInputModel";
 import { randomUUID } from "crypto";
 import { add } from "date-fns";
+import { ErrorMessage } from "express-validator/lib/base";
+import { errorsMessagesType } from "../../../types/errorsMessagesType";
 
 export const usersService = {
-   async createUser (reqBody:UserInputModel):Promise<any>{
+   async createUser (reqBody:UserInputModel):Promise<string | errorsMessagesType>{
       const isUniqueEmail = await usersRepository.findUserByEmailOrLogin(reqBody.email)
       if (isUniqueEmail ) {
          return {
@@ -20,7 +22,7 @@ export const usersService = {
           }
       }
       const isUniqueLogin = await usersRepository.findUserByEmailOrLogin(reqBody.login)
-      if (isUniqueEmail ) {
+      if (isUniqueLogin  ) {
          return {
             "errorsMessages": [
               {
@@ -35,6 +37,15 @@ export const usersService = {
          ...reqBody,
          password: await this._createHashPassword(reqBody.password),
          createdAt: new Date().toISOString(),
+         emailConfirmation: {
+            confirmationCode: randomUUID(),
+            expirationDate: add(new Date(), {
+               // hours: 1,
+               minutes: 30,
+            }),
+            isConfirmed: true
+        },
+        sessionDevice:[]
       }
       const createUserId = await usersRepository.create(user)
       
@@ -53,5 +64,5 @@ export const usersService = {
       // const  hashedPassword = await this._createHashPassword(password)
 
       return await bcrypt.compare(password , storedHash)
-   },
+   }
 }

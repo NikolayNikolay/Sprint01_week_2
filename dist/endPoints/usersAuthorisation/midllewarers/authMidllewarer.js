@@ -9,20 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateUser = void 0;
+exports.authRefreshToken = exports.authenticateUser = void 0;
 const jwtServises_1 = require("../applications/jwtServises");
 const settings_1 = require("../../../settings");
 const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
-        if (!token) {
+        const accsessToken = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+        if (!accsessToken) {
             req.user = null;
             return res.send(settings_1.httpStatusCodes.UNAUTHORIZED_401);
         }
         // Decode the token
-        const decoded = yield jwtServises_1.jwtServise.checkJwtTokenUser(token);
-        req.user = { id: decoded.userId, name: decoded.name, email: decoded.email }; // Populate `req.user`
+        const decodedTokens = jwtServises_1.jwtServise.checkJwtTokensUser(accsessToken);
+        req.user = Object.assign({ user_id: decodedTokens === null || decodedTokens === void 0 ? void 0 : decodedTokens.user_id }, decodedTokens); // Populate `req.user`
         next();
         return;
     }
@@ -33,3 +33,28 @@ const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.authenticateUser = authenticateUser;
+const authRefreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        // console.log('inside midleware      ',req.headers.cookie);
+        const refreshToken = (_a = req.headers.cookie) === null || _a === void 0 ? void 0 : _a.split('=')[1].split(";")[0];
+        // console.log('inside midleware      ', refreshToken);
+        if (!refreshToken) {
+            req.user = null;
+            return res.sendStatus(settings_1.httpStatusCodes.UNAUTHORIZED_401);
+        }
+        // Decode the token
+        const decodedTokens = jwtServises_1.jwtServise.checkJwtTokensUser(refreshToken);
+        // console.log('decoded refrech token  ', decodedTokens);
+        req.user = Object.assign({ user_id: decodedTokens === null || decodedTokens === void 0 ? void 0 : decodedTokens.user_id }, decodedTokens); // Populate `req.user`
+        next();
+        return;
+    }
+    catch (error) {
+        console.log(error);
+        req.user = null;
+        res.sendStatus(settings_1.httpStatusCodes.UNAUTHORIZED_401);
+        return;
+    }
+});
+exports.authRefreshToken = authRefreshToken;

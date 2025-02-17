@@ -14,9 +14,13 @@ import { add} from "date-fns/add";
 import { RegistrationConfirmationCodeModel } from "../models/RegistrationConfirmationCodeModel";
 import { isBefore } from "date-fns/isBefore";
 import { RegistrationEmail } from "../models/RegistrationEmailResendingModel";
+import { jwtServise } from "../applications/jwtServises";
+import { LoginSuccessViewModel } from "../models/LoginSuccessViewModel";
+import { DeviceDbModel } from "../../securityDevices/models/DeviceViewModel";
+import { error } from "console";
 
 export const authUserService = {
-   async authorizationCheck(authData:LoginInputModelType):Promise<ResponseObjectType<UserViewModelWith_id | null>>{
+   async authorizationCheck(authData:LoginInputModelType,ip:string,device_name:string):Promise<ResponseObjectType<LoginSuccessViewModel | null>>{
       const user = await usersRepository.findUserByEmailOrLogin(authData.loginOrEmail)
       if (!user) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] })
@@ -26,7 +30,24 @@ export const authUserService = {
       if (!checkPssword) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid Password or Email', field: 'Password or Email' }] })
       }
-      return resultResponsObject(ResultStatus.Success,'Success',user)
+      if (!user.emailConfirmation.isConfirmed) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'Email not confirmed', field: 'emailConfirmati' }] })
+      }
+      // add logic session users with diferent units
+      let sessionData: any = {
+         ip,
+         device_name,
+         device_id:randomUUID(),
+         user_id: user._id.toString(),
+      }
+      const tokens = jwtServise.generateJwtTokens(user,sessionData)
+      const decodedAndTakeIssueAtandExp = jwtServise.decodingJwt(tokens.refreshToken)
+      sessionData = {...decodedAndTakeIssueAtandExp}// decoded data has what need to add in sessionDevice
+      console.log(sessionData);
+      // todo: add repository and puch ssesionData in field sessionDevice
+      const addSessionData = await usersRepository.pushOrAddSomeDataValueUser({'_id': new ObjectId(user._id)},'sessionDevice',sessionData)
+      console.log(addSessionData);
+      return resultResponsObject(ResultStatus.Success,'Success',tokens)
    },
    //
    async registerUser(regisData:UserInputModel):Promise<ResponseObjectType>{
@@ -49,7 +70,8 @@ export const authUserService = {
                minutes: 30,
             }),
             isConfirmed: false
-        }
+        },
+        sessionDevice:[]
       }
       
       const createUserId = await usersRepository.create(newUser)
@@ -128,6 +150,61 @@ export const authUserService = {
       // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
       //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
       // }
+      return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
+   },
+   async userRefreshToken(user: DeviceDbModel, deviceName:string, ipAddres:string):Promise<ResponseObjectType<LoginSuccessViewModel | null>>{
+      const checkUser = await usersRepository.findUserById(new ObjectId(user.user_id))
+      if (!checkUser) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid id', field: 'id' }] })
+      }
+      // check iat from token in user field sessionDevice
+      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.iat === user.iat && session.device_id === user.device_id)
+      console.log('servise to check iat   ',isValidToken, user, deviceName);
+      if (!isValidToken) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid token', field: 'token' }] })
+      }
+      console.log(isValidToken.device_name === deviceName);
+      if (isValidToken.device_name.toLowerCase() !== deviceName.toLowerCase()) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'unknown device', field: 'device' }] })
+      }
+      if (isValidToken.ip.toLowerCase() !== ipAddres.toLowerCase()) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'unknown ip', field: 'ip' }] })
+      }
+
+      const newPaerTokens = jwtServise.generateJwtTokens(checkUser, isValidToken)
+      
+      if (!newPaerTokens.accessToken && !newPaerTokens.refreshToken) {
+         return resultResponsObject(ResultStatus.ServerError,'500',null,{ errorsMessages: [{ message: 'can not create', field: 'token' }] })
+      }
+      // after created new tokens decod refresh and update session iat and exp
+      const decodedSessionData = jwtServise.decodingJwt(newPaerTokens.refreshToken)
+      if (!decodedSessionData) {
+        throw new Error('decode is null')
+      }
+      const renewToken = await usersRepository.updateSessionDeviceInformation({'_id': new ObjectId(user.user_id) },decodedSessionData)
+      console.log('renew refrech token   ',isValidToken, renewToken );
+      
+      if (!renewToken) {
+         return resultResponsObject(ResultStatus.ServerError,'500',null,{ errorsMessages: [{ message: 'some server error', field: 'token' }] })
+      }
+      return resultResponsObject(ResultStatus.Success,'Success',newPaerTokens)
+   },
+   async userLogOut(userId: string, sessionDeviceId:string):Promise<ResponseObjectType>{
+      const checkUser = await usersRepository.findUserById(new ObjectId(userId))
+      if (!checkUser) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid id', field: 'id' }] })
+      }
+      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.device_id === sessionDeviceId)
+      if (!isValidToken) {
+         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid token', field: 'token' }] })
+      }
+      const removeSession = await usersRepository.removeSomeData({'_id': new ObjectId(checkUser._id) },{sessionDevice:{device_id:sessionDeviceId}})
+      const checkUser2 = await usersRepository.findUserById(new ObjectId(userId))
+      console.log(checkUser2);
+      
+      if (!removeSession) {
+         return resultResponsObject(ResultStatus.ServerError,'500',null,{ errorsMessages: [{ message: 'some server error', field: 'token' }] })
+      }
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
    }
 }

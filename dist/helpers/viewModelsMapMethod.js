@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mapViewCommentsModel = exports.mapViewUsersModel = exports.mapViewPostsModel = exports.mapViewBlogsModel = void 0;
+exports.mapViewDeviceModel = exports.mapViewCommentsModel = exports.mapMeViewModel = exports.mapViewUsersModel = exports.mapViewPostsModel = exports.mapViewBlogsModel = void 0;
 const mapViewBlogsModel = (data) => {
     if (Array.isArray(data)) {
         return data.map((blog) => {
@@ -85,6 +85,14 @@ const mapViewUsersModel = (data) => {
     }
 };
 exports.mapViewUsersModel = mapViewUsersModel;
+const mapMeViewModel = (data) => {
+    const { _id } = data, item = __rest(data, ["_id"]);
+    return { userId: _id.toString(),
+        login: item.login,
+        email: item.email,
+    };
+};
+exports.mapMeViewModel = mapMeViewModel;
 const mapViewCommentsModel = (data) => {
     if (Array.isArray(data)) {
         return data.map((comment) => {
@@ -112,3 +120,16 @@ const mapViewCommentsModel = (data) => {
     }
 };
 exports.mapViewCommentsModel = mapViewCommentsModel;
+const mapViewDeviceModel = (data) => {
+    const resultDeviceView = data.sessionDevice.map((session) => {
+        const device = __rest(session, []);
+        return {
+            ip: device.ip,
+            title: device.device_name,
+            lastActiveDate: device.iat.toString(),
+            deviceId: device.device_id,
+        };
+    });
+    return resultDeviceView;
+};
+exports.mapViewDeviceModel = mapViewDeviceModel;

@@ -18,5 +18,5 @@ export const commentsRouter = Router()
 
 commentsRouter.put('/:commentId',authenticateUser,commentContentValidation,inputCheckErrorsMiddleware,commentsController.updateComments)
 commentsRouter.delete('/:commentId',authenticateUser,commentsController.deleteComments)
-commentsRouter.get('/:id',isValidObjectId,commentsController.getOneCommentsById)
+commentsRouter.get('/:id',isValidObjectId,inputCheckErrorsMiddleware,commentsController.getOneCommentsById)
 
