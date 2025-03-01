@@ -126,8 +126,8 @@ const mapViewDeviceModel = (data) => {
         return {
             ip: device.ip,
             title: device.device_name,
-            lastActiveDate: device.iat.toString(),
-            deviceId: device.device_id,
+            lastActiveDate: new Date(device.iat * 1000).toISOString(),
+            deviceId: device.deviceId,
         };
     });
     return resultDeviceView;

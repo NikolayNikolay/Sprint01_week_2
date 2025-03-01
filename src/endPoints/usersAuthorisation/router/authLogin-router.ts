@@ -20,5 +20,9 @@ authLoginRouter.post('/registration-email-resending',usersEmailValidations,input
 authLoginRouter.post('/refresh-token',authRefreshToken,authLoginController.userRefreshToken)
 authLoginRouter.post('/logout',authRefreshToken,authLoginController.userLogOut)
 
+authLoginRouter.post('/password-recovery',usersEmailValidations,inputCheckErrorsMiddleware,authLoginController.passwordRecovery)
+authLoginRouter.post('/new-password',usersPasswordValidations,inputCheckErrorsMiddleware,authLoginController.newPassword)
+
+
 
 

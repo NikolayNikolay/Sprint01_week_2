@@ -35,9 +35,7 @@ exports.usersController = {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = yield usersService_1.usersService.createUser(req.body);
             if (typeof userId === 'string') {
-                console.log('inside create userID', userId);
                 const getCreatedUser = yield queryUsersRepository_1.queryUsersRepository.getUserById(new mongodb_1.ObjectId(userId));
-                console.log('inside create user ', getCreatedUser);
                 res.status(settings_1.httpStatusCodes.CREATED_201).send(getCreatedUser);
             }
             else {

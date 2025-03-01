@@ -1,7 +1,7 @@
 import { ObjectId, UpdateFilter } from "mongodb";
 import { usersCollection } from "../../../db/mongo-db";
 import { EmailConfirmation, UserDBModelWithCongirmation } from "../../usersAuthorisation/models/UserRegistrationConfimationModel";
-import { UserDbModel } from "../models/UserDbModel";
+import { PasswordRecoveryDbModel, UserDbModel } from "../models/UserDbModel";
 import { DeviceDbModel } from "../../securityDevices/models/DeviceViewModel";
 
 
@@ -30,19 +30,18 @@ export const usersRepository = {
       const findAndUpdateUser = await usersCollection.findOneAndUpdate(filter,{$set:update},{ returnDocument: 'after' })
       return findAndUpdateUser
    },
-   async pushOrAddSomeDataValueUser(filter:any, field: string, value: string | number | boolean | DeviceDbModel ):Promise<UserDbModel | null>{
+   async pushOrAddSomeDataValueUser(filter:any, field: string, value: string | number | boolean | DeviceDbModel | PasswordRecoveryDbModel):Promise<UserDbModel | null>{
       // using filter for find some document, field wich have to be udate, value wich need renew
       const update = { [field]: value };
       const findAndPushDataUser = await usersCollection.findOneAndUpdate(filter,{$push:update},{ returnDocument: 'after' })
       return findAndPushDataUser
    },
-   async findUserWithEmailConfirmation(filter:any):Promise<UserDbModel | null>{
+   async findUserWithAnyInformation(filter:any):Promise<UserDbModel | null>{
       const findUserResult = await usersCollection.findOne(filter)
       return findUserResult
    },
    // update or delete session information
    async updateSessionDeviceInformation (filter:any,sessionInfo:DeviceDbModel){
-      console.log(filter, sessionInfo);
       
       const updateResult = await usersCollection.findOneAndUpdate(filter,{
          $set: {
@@ -51,7 +50,7 @@ export const usersRepository = {
          }
      },
      {
-         arrayFilters: [{ 'device.device_id': sessionInfo.device_id }],
+         arrayFilters: [{ 'device.deviceId': sessionInfo.deviceId }],
          returnDocument: 'after'
      })
        return updateResult
@@ -67,9 +66,17 @@ export const usersRepository = {
    async findUserByDeviceId(deviceId:string):Promise<UserDbModel | null>{
       const result = await usersCollection.findOne({
          sessionDevice: {
-           $elemMatch: { device_id: deviceId }
+           $elemMatch: { deviceId: deviceId }
          }
        })
       return result 
+   },
+   async updateSomeObjInArray(filter:any, value: string|boolean):Promise<UserDbModel | null>{
+      const updatedResult = await usersCollection.findOneAndUpdate(
+         filter, 
+         { $set: { "passwordRecovery.$.isConfirmed": value } }, 
+         {returnDocument: 'after'} // Returns the updated document
+       );
+       return updatedResult
    }
 }

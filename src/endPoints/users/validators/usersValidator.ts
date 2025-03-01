@@ -5,7 +5,6 @@ export const usersPasswordValidations = body('password').isString().withMessage(
 
 export const usersLoginValidations = body('login').isString().withMessage('not string').isLength({min:3, max:10}).withMessage('not valid length, must be min 3 mathes or max 10 mathes')
                                        .custom((login) =>{
-                                          console.log(login)
                                           const pattern = new RegExp(
                                              '^[a-zA-Z0-9_-]*$');
                                              if (!pattern.test(login)) {
@@ -15,7 +14,7 @@ export const usersLoginValidations = body('login').isString().withMessage('not s
                                        })
 
 export const usersEmailValidations = body('email').custom((email) =>{
-   console.log(email)
+
    email = email.trim()
    const pattern = /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/;
       if (!pattern.test(email)) {

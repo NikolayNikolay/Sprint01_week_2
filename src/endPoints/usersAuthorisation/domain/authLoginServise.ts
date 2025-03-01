@@ -4,11 +4,9 @@ import { usersRepository } from "../../users/repository/usersRepository";
 import { resultResponsObject } from "../../../helpers/resultResponsObject";
 import { ResultStatus } from "../../../enums/resultStatus";
 import { ResponseObjectType } from "../../../types/ResponseObjectType";
-import {UserViewModelWith_id } from "../../users/models/UserViewModel";
 import { UserInputModel } from "../../users/models/UserInputModel";
 import { ObjectId } from "mongodb";
 import { emailServise } from "../emailDomain/emailServise";
-import { UserDBModelWithCongirmation } from "../models/UserRegistrationConfimationModel";
 import { randomUUID} from "crypto";
 import { add} from "date-fns/add";
 import { RegistrationConfirmationCodeModel } from "../models/RegistrationConfirmationCodeModel";
@@ -17,9 +15,11 @@ import { RegistrationEmail } from "../models/RegistrationEmailResendingModel";
 import { jwtServise } from "../applications/jwtServises";
 import { LoginSuccessViewModel } from "../models/LoginSuccessViewModel";
 import { DeviceDbModel } from "../../securityDevices/models/DeviceViewModel";
-import { error } from "console";
+import { PasswordRecoveryDbModel, UserDbModel } from "../../users/models/UserDbModel";
+import { NewPasswordRecoveryInputModel } from "../models/NewPasswordRecoveryInputModel";
 
-export const authUserService = {
+
+class AuthUserService{
    async authorizationCheck(authData:LoginInputModelType,ip:string,device_name:string):Promise<ResponseObjectType<LoginSuccessViewModel | null>>{
       const user = await usersRepository.findUserByEmailOrLogin(authData.loginOrEmail)
       if (!user) {
@@ -37,18 +37,17 @@ export const authUserService = {
       let sessionData: any = {
          ip,
          device_name,
-         device_id:randomUUID(),
+         deviceId:randomUUID(),
          user_id: user._id.toString(),
       }
       const tokens = jwtServise.generateJwtTokens(user,sessionData)
       const decodedAndTakeIssueAtandExp = jwtServise.decodingJwt(tokens.refreshToken)
       sessionData = {...decodedAndTakeIssueAtandExp}// decoded data has what need to add in sessionDevice
-      console.log(sessionData);
-      // todo: add repository and puch ssesionData in field sessionDevice
+      
       const addSessionData = await usersRepository.pushOrAddSomeDataValueUser({'_id': new ObjectId(user._id)},'sessionDevice',sessionData)
-      console.log(addSessionData);
+      
       return resultResponsObject(ResultStatus.Success,'Success',tokens)
-   },
+   }
    //
    async registerUser(regisData:UserInputModel):Promise<ResponseObjectType>{
       const unickEmail = await usersRepository.findUserByEmailOrLogin(regisData.email)
@@ -59,7 +58,7 @@ export const authUserService = {
 
       if (unickLogin) return resultResponsObject(ResultStatus.BadRequest,'Bad request',null,{ errorsMessages: [{ message: 'Existed Login', field: 'login' }] })
 
-      const newUser = {
+      const newUser:Omit<UserDbModel, '_id'> = {
          ...regisData,
          password: await usersService._createHashPassword(regisData.password),
          createdAt: new Date().toISOString(),
@@ -71,7 +70,8 @@ export const authUserService = {
             }),
             isConfirmed: false
         },
-        sessionDevice:[]
+        sessionDevice:[],
+        passwordRecovery:[]
       }
       
       const createUserId = await usersRepository.create(newUser)
@@ -81,19 +81,18 @@ export const authUserService = {
       }
       // if user created and is found, will send email confirmation.
       try {
-         console.log('send email for confirm');
          
-        await emailServise.sendEmail(regisData.email,newUser.emailConfirmation.confirmationCode)
+        emailServise.sendEmailForRegistration(regisData.email,newUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
-   },
+   }
    async confirmationUser(uuIdCode:RegistrationConfirmationCodeModel){
       if (!uuIdCode.code) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not code in body", field: "code" }] })
       }
-      const getUserByConfirmCode = await usersRepository.findUserWithEmailConfirmation({'emailConfirmation.confirmationCode' : uuIdCode.code})
+      const getUserByConfirmCode = await usersRepository.findUserWithAnyInformation({'emailConfirmation.confirmationCode' : uuIdCode.code})
       
       // check is existing user by uuId 
       if (!getUserByConfirmCode) {
@@ -107,7 +106,7 @@ export const authUserService = {
       // check experation date, must be last in the list
       const checkExpirationDate = isBefore(getUserByConfirmCode!.emailConfirmation!.expirationDate, new Date())
       
-      if (checkExpirationDate) {
+      if (!checkExpirationDate) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Expired", field: "code" }] })
       }
       // update confirm field
@@ -115,7 +114,7 @@ export const authUserService = {
       
 
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content',)
-   },
+   }
    async emailResendingForConfirmation(userEmail:RegistrationEmail):Promise<ResponseObjectType>{
       if (!userEmail.email) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "Not email in body", field: "email" }] })
@@ -129,48 +128,26 @@ export const authUserService = {
       if (getUser.emailConfirmation.isConfirmed) {
          return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] })
       }
-         // const confirmationCode = randomUUID()
-         // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
-         // console.log(`resend email ${confirmationCode} - ${renewConfirmCodeInUser?.emailConfirmation?.confirmationCode} - ${getUser.emailConfirmation.confirmationCode}`);
-         // try {
-         //    console.log('call emailsender');
-            
-         //    await emailServise.sendEmail(getUser.email,confirmationCode)
-         // } catch (err) {
-         //    console.error(err);
-         // }
-         // return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
       try {
-         console.log('resend email' + userEmail.email);
-         
-         await emailServise.sendEmail(userEmail.email,getUser.emailConfirmation.confirmationCode)
+         emailServise.sendEmailForRegistration(userEmail.email,getUser.emailConfirmation.confirmationCode)
       } catch (err) {
          console.error(err);
       }
-      // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-      //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
-      // }
+ 
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
-   },
+   }
    async userRefreshToken(user: DeviceDbModel, deviceName:string, ipAddres:string):Promise<ResponseObjectType<LoginSuccessViewModel | null>>{
       const checkUser = await usersRepository.findUserById(new ObjectId(user.user_id))
       if (!checkUser) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid id', field: 'id' }] })
       }
+      
       // check iat from token in user field sessionDevice
-      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.iat === user.iat && session.device_id === user.device_id)
-      console.log('servise to check iat   ',isValidToken, user, deviceName);
+      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.iat === user.iat && session.deviceId === user.deviceId)
       if (!isValidToken) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid token', field: 'token' }] })
       }
-      console.log(isValidToken.device_name === deviceName);
-      if (isValidToken.device_name.toLowerCase() !== deviceName.toLowerCase()) {
-         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'unknown device', field: 'device' }] })
-      }
-      if (isValidToken.ip.toLowerCase() !== ipAddres.toLowerCase()) {
-         return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'unknown ip', field: 'ip' }] })
-      }
-
+      
       const newPaerTokens = jwtServise.generateJwtTokens(checkUser, isValidToken)
       
       if (!newPaerTokens.accessToken && !newPaerTokens.refreshToken) {
@@ -182,29 +159,76 @@ export const authUserService = {
         throw new Error('decode is null')
       }
       const renewToken = await usersRepository.updateSessionDeviceInformation({'_id': new ObjectId(user.user_id) },decodedSessionData)
-      console.log('renew refrech token   ',isValidToken, renewToken );
+      
       
       if (!renewToken) {
          return resultResponsObject(ResultStatus.ServerError,'500',null,{ errorsMessages: [{ message: 'some server error', field: 'token' }] })
       }
       return resultResponsObject(ResultStatus.Success,'Success',newPaerTokens)
-   },
-   async userLogOut(userId: string, sessionDeviceId:string):Promise<ResponseObjectType>{
-      const checkUser = await usersRepository.findUserById(new ObjectId(userId))
+   }
+   async userLogOut(userSessionDevice:DeviceDbModel):Promise<ResponseObjectType>{
+      const checkUser = await usersRepository.findUserById(new ObjectId(userSessionDevice.user_id))
       if (!checkUser) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid id', field: 'id' }] })
       }
-      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.device_id === sessionDeviceId)
+      const isValidToken:DeviceDbModel | undefined = checkUser.sessionDevice.find((session:DeviceDbModel) => session.iat === userSessionDevice.iat && session.deviceId === userSessionDevice.deviceId)
       if (!isValidToken) {
          return resultResponsObject(ResultStatus.Unathorized,'Unathorized',null,{ errorsMessages: [{ message: 'invalid token', field: 'token' }] })
       }
-      const removeSession = await usersRepository.removeSomeData({'_id': new ObjectId(checkUser._id) },{sessionDevice:{device_id:sessionDeviceId}})
-      const checkUser2 = await usersRepository.findUserById(new ObjectId(userId))
-      console.log(checkUser2);
+      const removeSession = await usersRepository.removeSomeData({'_id': new ObjectId(checkUser._id) },{sessionDevice:{deviceId:userSessionDevice.deviceId}})
+      const checkUser2 = await usersRepository.findUserById(new ObjectId(userSessionDevice.user_id))
       
       if (!removeSession) {
          return resultResponsObject(ResultStatus.ServerError,'500',null,{ errorsMessages: [{ message: 'some server error', field: 'token' }] })
       }
       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
    }
+   async passwordRecovery(userEmail:string){
+      const user = await usersRepository.findUserByEmailOrLogin(userEmail)
+      const recoveryPassword :PasswordRecoveryDbModel = {
+         recoveryCode: randomUUID(),
+         expirationDate: add(new Date(), {
+            // hours: 1,
+            minutes: 30,
+         }),
+         isConfirmed: false
+      }
+      const addRecoverCodeResult = await usersRepository.pushOrAddSomeDataValueUser({'email':userEmail},'passwordRecovery',recoveryPassword)
+      console.log('passwordRecovery      ',addRecoverCodeResult);
+      try {
+         emailServise.sendEmailForRegistration(userEmail,recoveryPassword.recoveryCode)
+       } catch (err) {
+         console.error(err);
+       }
+       return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
+   }
+   async newPassword(confirmData:NewPasswordRecoveryInputModel){
+      const user = await usersRepository.findUserWithAnyInformation({'recoveryCode':confirmData.recoveryCode})
+      if (!user) {
+         return resultResponsObject(ResultStatus.NotFound,'Not Found',null,{ errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] })
+      }
+      const checkRecoveryCode = user.passwordRecovery.find((code:PasswordRecoveryDbModel) => code.recoveryCode === confirmData.recoveryCode)
+      if (!checkRecoveryCode?.isConfirmed) {
+         return resultResponsObject(ResultStatus.NotFound,'Not Found',null,{ errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] })
+      }
+      const checkExpirationDate = isBefore(checkRecoveryCode.expirationDate, new Date())
+      if (checkExpirationDate) {
+         return resultResponsObject(ResultStatus.NotFound,'Not Found',null,{ errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] })
+      }
+
+      const createNewPassword = await usersService._createHashPassword(confirmData.newPassword)
+
+      const updateInfoAboutCode = await usersRepository.updateSomeDataValueUser({'_id':user._id}, 'password', createNewPassword)
+      console.log('create new password   ',user, updateInfoAboutCode);
+      const updateConfirmRecoverCode = await usersRepository.updateSomeObjInArray({'_id':user._id, 'passwordRecovery.recoveryCode':confirmData.recoveryCode}, true )
+      console.log('after updateConfirmRecoverCode     ', updateConfirmRecoverCode);
+      if (!updateInfoAboutCode || !updateConfirmRecoverCode) {
+         //todo: finich logic update new password
+         return resultResponsObject(ResultStatus.ServerError,'Server Error',null,{ errorsMessages: [{ message: 'some error with server', field: 'server' }] })
+      }
+      return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content',null)
+      
+   }
 }
+
+export const authUserService = new AuthUserService()

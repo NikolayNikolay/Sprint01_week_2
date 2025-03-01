@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22,12 +31,15 @@ exports.app = (0, express_1.default)(); // создать приложение
 exports.app.use(express_1.default.json()); // создание свойств-объектов body и query во всех реквестах
 exports.app.use((0, cors_1.default)()); // разрешить любым фронтам делать запросы на наш бэк
 exports.app.use((0, cookie_parser_1.default)());
-exports.app.use(allRequestsApiMiddleware_1.trackAllRequestsApi); //middleware for tracking any requests and save ip,url,date
+exports.app.use((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('check path    ', req.originalUrl);
+    next();
+})); //middleware for tracking any requests and save ip,url,date
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blog_post_router_1.blogPostRouter);
 exports.app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.users, users_router_1.usersRouter);
-exports.app.use(settings_1.SETTINGS.PATH.authLogin, authLogin_router_1.authLoginRouter);
+exports.app.use(settings_1.SETTINGS.PATH.authLogin, allRequestsApiMiddleware_1.trackAllRequestsApi, authLogin_router_1.authLoginRouter); //middleware for tracking any requests and save ip,url,date
 exports.app.use(settings_1.SETTINGS.PATH.comments, comments_router_1.commentsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.posts, postsCommentsRouter_1.postsCommentsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.security, securityRouter_1.securityRouter);

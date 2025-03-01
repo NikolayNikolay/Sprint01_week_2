@@ -15,8 +15,12 @@ export const securityController ={
       res.sendStatus(resultStatusToHttpStatusCode(resultRemoved.status))
    },
    async deleteOneSessionDeviceByDeviceId(req:Request,res:Response){
+      if (!req.params.deviceId) {
+         res.sendStatus(resultStatusToHttpStatusCode(ResultStatus.NotFound))
+         return
+      }
       if (!req.params.deviceId || !req.user) {
-         res.sendStatus(resultStatusToHttpStatusCode(ResultStatus.Forbidden))
+         res.sendStatus(resultStatusToHttpStatusCode(ResultStatus.NotFound))
          return
       }
       const resultSessionDeviceDelete = await securityService.deleteOneSessionByDeviceId(req.user,req.params.deviceId)

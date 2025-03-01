@@ -27,10 +27,8 @@ export const usersController = {
    async createUser(req:Request,res:Response){
       const userId = await usersService.createUser(req.body)
       if (typeof userId === 'string') {
-         console.log('inside create userID', userId);
          
          const getCreatedUser = await queryUsersRepository.getUserById(new ObjectId(userId))
-         console.log('inside create user ', getCreatedUser);
          
          res.status(httpStatusCodes.CREATED_201).send(getCreatedUser)
       }

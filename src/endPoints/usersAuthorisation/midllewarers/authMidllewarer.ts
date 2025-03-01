@@ -45,7 +45,7 @@ export const authRefreshToken = async (req: Request, res: Response, next: NextFu
     return
   } 
   catch (error) {
-    console.log(error);
+    console.log('authRefrech', error);
     
     req.user = null;
     res.sendStatus(httpStatusCodes.UNAUTHORIZED_401);

@@ -20,7 +20,7 @@ const crypto_1 = require("crypto");
 const add_1 = require("date-fns/add");
 const isBefore_1 = require("date-fns/isBefore");
 const jwtServises_1 = require("../applications/jwtServises");
-exports.authUserService = {
+class AuthUserService {
     authorizationCheck(authData, ip, device_name) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(authData.loginOrEmail);
@@ -38,19 +38,16 @@ exports.authUserService = {
             let sessionData = {
                 ip,
                 device_name,
-                device_id: (0, crypto_1.randomUUID)(),
+                deviceId: (0, crypto_1.randomUUID)(),
                 user_id: user._id.toString(),
             };
             const tokens = jwtServises_1.jwtServise.generateJwtTokens(user, sessionData);
             const decodedAndTakeIssueAtandExp = jwtServises_1.jwtServise.decodingJwt(tokens.refreshToken);
             sessionData = Object.assign({}, decodedAndTakeIssueAtandExp); // decoded data has what need to add in sessionDevice
-            console.log(sessionData);
-            // todo: add repository and puch ssesionData in field sessionDevice
             const addSessionData = yield usersRepository_1.usersRepository.pushOrAddSomeDataValueUser({ '_id': new mongodb_1.ObjectId(user._id) }, 'sessionDevice', sessionData);
-            console.log(addSessionData);
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', tokens);
         });
-    },
+    }
     //
     registerUser(regisData) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,7 +64,7 @@ exports.authUserService = {
                         minutes: 30,
                     }),
                     isConfirmed: false
-                }, sessionDevice: [] });
+                }, sessionDevice: [], passwordRecovery: [] });
             const createUserId = yield usersRepository_1.usersRepository.create(newUser);
             if (!createUserId) {
                 //500 err
@@ -75,21 +72,20 @@ exports.authUserService = {
             }
             // if user created and is found, will send email confirmation.
             try {
-                console.log('send email for confirm');
-                yield emailServise_1.emailServise.sendEmail(regisData.email, newUser.emailConfirmation.confirmationCode);
+                emailServise_1.emailServise.sendEmailForRegistration(regisData.email, newUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
-    },
+    }
     confirmationUser(uuIdCode) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!uuIdCode.code) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not code in body", field: "code" }] });
             }
-            const getUserByConfirmCode = yield usersRepository_1.usersRepository.findUserWithEmailConfirmation({ 'emailConfirmation.confirmationCode': uuIdCode.code });
+            const getUserByConfirmCode = yield usersRepository_1.usersRepository.findUserWithAnyInformation({ 'emailConfirmation.confirmationCode': uuIdCode.code });
             // check is existing user by uuId 
             if (!getUserByConfirmCode) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Not found", field: "code" }] });
@@ -100,14 +96,14 @@ exports.authUserService = {
             }
             // check experation date, must be last in the list
             const checkExpirationDate = (0, isBefore_1.isBefore)(getUserByConfirmCode.emailConfirmation.expirationDate, new Date());
-            if (checkExpirationDate) {
+            if (!checkExpirationDate) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "Expired", field: "code" }] });
             }
             // update confirm field
             const updateConfirmation = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': new mongodb_1.ObjectId(getUserByConfirmCode._id) }, 'emailConfirmation.isConfirmed', true);
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
-    },
+    }
     emailResendingForConfirmation(userEmail) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!userEmail.email) {
@@ -120,29 +116,15 @@ exports.authUserService = {
             if (getUser.emailConfirmation.isConfirmed) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.BadRequest, 'Bad Request', null, { errorsMessages: [{ message: "alredy confirmed", field: "email" }] });
             }
-            // const confirmationCode = randomUUID()
-            // const renewConfirmCodeInUser = await usersRepository.updateSomeDataValueUser({'_id': getUser._id }, 'emailConfirmation.confirmationCode',  confirmationCode )
-            // console.log(`resend email ${confirmationCode} - ${renewConfirmCodeInUser?.emailConfirmation?.confirmationCode} - ${getUser.emailConfirmation.confirmationCode}`);
-            // try {
-            //    console.log('call emailsender');
-            //    await emailServise.sendEmail(getUser.email,confirmationCode)
-            // } catch (err) {
-            //    console.error(err);
-            // }
-            // return resultResponsObject(ResultStatus.SuccessNoContent,'Success No Content')
             try {
-                console.log('resend email' + userEmail.email);
-                yield emailServise_1.emailServise.sendEmail(userEmail.email, getUser.emailConfirmation.confirmationCode);
+                emailServise_1.emailServise.sendEmailForRegistration(userEmail.email, getUser.emailConfirmation.confirmationCode);
             }
             catch (err) {
                 console.error(err);
             }
-            // if (renewConfirmCodeInUser!.emailConfirmation!.confirmationCode === getUser.emailConfirmation.confirmationCode) {
-            //    return resultResponsObject(ResultStatus.BadRequest,'Bad Request',null,{ errorsMessages: [{ message: "some wrong with code", field: "confirm code" }] })
-            // }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
-    },
+    }
     userRefreshToken(user, deviceName, ipAddres) {
         return __awaiter(this, void 0, void 0, function* () {
             const checkUser = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(user.user_id));
@@ -150,17 +132,9 @@ exports.authUserService = {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid id', field: 'id' }] });
             }
             // check iat from token in user field sessionDevice
-            const isValidToken = checkUser.sessionDevice.find((session) => session.iat === user.iat && session.device_id === user.device_id);
-            console.log('servise to check iat   ', isValidToken, user, deviceName);
+            const isValidToken = checkUser.sessionDevice.find((session) => session.iat === user.iat && session.deviceId === user.deviceId);
             if (!isValidToken) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid token', field: 'token' }] });
-            }
-            console.log(isValidToken.device_name === deviceName);
-            if (isValidToken.device_name.toLowerCase() !== deviceName.toLowerCase()) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'unknown device', field: 'device' }] });
-            }
-            if (isValidToken.ip.toLowerCase() !== ipAddres.toLowerCase()) {
-                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'unknown ip', field: 'ip' }] });
             }
             const newPaerTokens = jwtServises_1.jwtServise.generateJwtTokens(checkUser, isValidToken);
             if (!newPaerTokens.accessToken && !newPaerTokens.refreshToken) {
@@ -172,30 +146,77 @@ exports.authUserService = {
                 throw new Error('decode is null');
             }
             const renewToken = yield usersRepository_1.usersRepository.updateSessionDeviceInformation({ '_id': new mongodb_1.ObjectId(user.user_id) }, decodedSessionData);
-            console.log('renew refrech token   ', isValidToken, renewToken);
             if (!renewToken) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, '500', null, { errorsMessages: [{ message: 'some server error', field: 'token' }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Success, 'Success', newPaerTokens);
         });
-    },
-    userLogOut(userId, sessionDeviceId) {
+    }
+    userLogOut(userSessionDevice) {
         return __awaiter(this, void 0, void 0, function* () {
-            const checkUser = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userId));
+            const checkUser = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userSessionDevice.user_id));
             if (!checkUser) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid id', field: 'id' }] });
             }
-            const isValidToken = checkUser.sessionDevice.find((session) => session.device_id === sessionDeviceId);
+            const isValidToken = checkUser.sessionDevice.find((session) => session.iat === userSessionDevice.iat && session.deviceId === userSessionDevice.deviceId);
             if (!isValidToken) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.Unathorized, 'Unathorized', null, { errorsMessages: [{ message: 'invalid token', field: 'token' }] });
             }
-            const removeSession = yield usersRepository_1.usersRepository.removeSomeData({ '_id': new mongodb_1.ObjectId(checkUser._id) }, { sessionDevice: { device_id: sessionDeviceId } });
-            const checkUser2 = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userId));
-            console.log(checkUser2);
+            const removeSession = yield usersRepository_1.usersRepository.removeSomeData({ '_id': new mongodb_1.ObjectId(checkUser._id) }, { sessionDevice: { deviceId: userSessionDevice.deviceId } });
+            const checkUser2 = yield usersRepository_1.usersRepository.findUserById(new mongodb_1.ObjectId(userSessionDevice.user_id));
             if (!removeSession) {
                 return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, '500', null, { errorsMessages: [{ message: 'some server error', field: 'token' }] });
             }
             return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
         });
     }
-};
+    passwordRecovery(userEmail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield usersRepository_1.usersRepository.findUserByEmailOrLogin(userEmail);
+            const recoveryPassword = {
+                recoveryCode: (0, crypto_1.randomUUID)(),
+                expirationDate: (0, add_1.add)(new Date(), {
+                    // hours: 1,
+                    minutes: 30,
+                }),
+                isConfirmed: false
+            };
+            const addRecoverCodeResult = yield usersRepository_1.usersRepository.pushOrAddSomeDataValueUser({ 'email': userEmail }, 'passwordRecovery', recoveryPassword);
+            console.log('passwordRecovery      ', addRecoverCodeResult);
+            try {
+                emailServise_1.emailServise.sendEmailForRegistration(userEmail, recoveryPassword.recoveryCode);
+            }
+            catch (err) {
+                console.error(err);
+            }
+            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content');
+        });
+    }
+    newPassword(confirmData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield usersRepository_1.usersRepository.findUserWithAnyInformation({ 'recoveryCode': confirmData.recoveryCode });
+            if (!user) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] });
+            }
+            const checkRecoveryCode = user.passwordRecovery.find((code) => code.recoveryCode === confirmData.recoveryCode);
+            if (!(checkRecoveryCode === null || checkRecoveryCode === void 0 ? void 0 : checkRecoveryCode.isConfirmed)) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] });
+            }
+            const checkExpirationDate = (0, isBefore_1.isBefore)(checkRecoveryCode.expirationDate, new Date());
+            if (checkExpirationDate) {
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.NotFound, 'Not Found', null, { errorsMessages: [{ message: 'invalid', field: 'recoveryCode' }] });
+            }
+            const createNewPassword = yield usersService_1.usersService._createHashPassword(confirmData.newPassword);
+            const updateInfoAboutCode = yield usersRepository_1.usersRepository.updateSomeDataValueUser({ '_id': user._id }, 'password', createNewPassword);
+            console.log('create new password   ', user, updateInfoAboutCode);
+            const updateConfirmRecoverCode = yield usersRepository_1.usersRepository.updateSomeObjInArray({ '_id': user._id, 'passwordRecovery.recoveryCode': confirmData.recoveryCode }, true);
+            console.log('after updateConfirmRecoverCode     ', updateConfirmRecoverCode);
+            if (!updateInfoAboutCode || !updateConfirmRecoverCode) {
+                //todo: finich logic update new password
+                return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.ServerError, 'Server Error', null, { errorsMessages: [{ message: 'some error with server', field: 'server' }] });
+            }
+            return (0, resultResponsObject_1.resultResponsObject)(resultStatus_1.ResultStatus.SuccessNoContent, 'Success No Content', null);
+        });
+    }
+}
+exports.authUserService = new AuthUserService();

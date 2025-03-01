@@ -13,6 +13,8 @@
          authLogin:'/auth',
          comments:'/comments',
          security:'/security',
+         passwordRecovery : '/password-recovery',
+         newPassword: '/new-password',
          DATA_BASE_NAME:'Blogers_Platform',
          BLOG_COLLECTION_NAME:"blogs",
          POST_COLLECTION_NAME:"posts",
@@ -33,7 +35,8 @@ export const httpStatusCodes = {
    BAD_REQUEST_400: 400,
    UNAUTHORIZED_401: 401,
    NOT_FOUND_404: 404,
-   FORBIDDEN_403: 403
+   FORBIDDEN_403: 403,
+   Too_Many_Requests_429: 429
 }
 
 export const ADMIN_AUTH = 'admin:qwerty'

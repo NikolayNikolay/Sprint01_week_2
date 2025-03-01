@@ -51,7 +51,7 @@ exports.usersService = {
                         minutes: 30,
                     }),
                     isConfirmed: true
-                }, sessionDevice: [] });
+                }, sessionDevice: [], passwordRecovery: [] });
             const createUserId = yield usersRepository_1.usersRepository.create(user);
             return createUserId;
         });

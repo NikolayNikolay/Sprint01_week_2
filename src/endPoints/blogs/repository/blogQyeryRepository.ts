@@ -9,9 +9,7 @@ import { PaginationBlogsType } from "../../blogPosts/models/PaginationsBlogsPost
 import { mapViewBlogsModel } from "../../../helpers/viewModelsMapMethod";
 
 
-
-
-export const queryBlogRepository ={
+export class QueryBlogRepository {
    async getAll(queryParams:QueryParamsType):Promise<PaginationBlogsType>{
       const serchFilter = filter(queryParams)
       const totalCount = await this.totalBlogs(serchFilter)
@@ -41,16 +39,17 @@ export const queryBlogRepository ={
          items: blogs
       }
 
-   },
+   }
    async getById(id:ObjectId):Promise<BlogViewModelType | boolean>{
       const foundBlog = await blogCollection.findOne({'_id':id})
       if (!foundBlog) {
          return false
       }
       return  mapViewBlogsModel(foundBlog)
-   },
+   }
    async totalBlogs(params?:any){
       return await blogCollection.countDocuments(params)
    }
-
 }
+
+export const queryBlogRepository = new QueryBlogRepository()

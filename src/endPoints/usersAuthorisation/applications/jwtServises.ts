@@ -12,11 +12,11 @@ const convertSecretForJwt = Buffer.from(SETTINGS.SECRET_KEY as string).toString(
 
 type returnDecodedModel = {
    user_id: string, 
-   iat:Date,
+   iat:number,
    ip:string,
    device_name:string,
-   device_id: string,
-   exp:Date
+   deviceId: string,
+   exp:number
 }
 
 
@@ -28,7 +28,7 @@ export const jwtServise = {
 
       const jwtRefresh = jwt.sign({ user_id: user._id.toString(), iat: Math.floor(Date.now() / 1000),ip:sessionData?.ip,
          device_name:sessionData?.device_name,
-         device_id:sessionData?.device_id}, convertSecretForJwt, { expiresIn: '10s' })
+         deviceId:sessionData?.deviceId}, convertSecretForJwt, { expiresIn: '20s' })
 
       return {
          accessToken: jwtAccess,
@@ -44,13 +44,13 @@ export const jwtServise = {
             return {
                ip: result.ip ? result.ip : null,
                device_name: result.device_name ? result.device_name : null,
-               device_id: result.device_id ? result.device_id : null,
+               deviceId: result.deviceId ? result.deviceId : null,
                user_id: result.user_id,
                iat: result.iat as number,
                exp: result.exp as number,
            };
       } catch (error) {
-         console.log(error);
+         console.log('checkJwt', error);
          throw error
       }
    },

@@ -15,3 +15,5 @@ exports.authLoginRouter.post('/registration-confirmation', authLoginController_1
 exports.authLoginRouter.post('/registration-email-resending', usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.resendingEmailForConfirmation);
 exports.authLoginRouter.post('/refresh-token', authMidllewarer_1.authRefreshToken, authLoginController_1.authLoginController.userRefreshToken);
 exports.authLoginRouter.post('/logout', authMidllewarer_1.authRefreshToken, authLoginController_1.authLoginController.userLogOut);
+exports.authLoginRouter.post('/password-recovery', usersValidator_1.usersEmailValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.passwordRecovery);
+exports.authLoginRouter.post('/new-password', usersValidator_1.usersPasswordValidations, imputCheckErrorsMiddleware_1.inputCheckErrorsMiddleware, authLoginController_1.authLoginController.newPassword);

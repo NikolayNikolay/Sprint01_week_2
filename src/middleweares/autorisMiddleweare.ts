@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 
 
 export const authMiddleware = async (req:Request, res:Response, next:NextFunction)=>{
-  console.log('inside Authorization');
  const authorizationHeader = req.headers['authorization'] as any;
     if (!authorizationHeader) {
         console.log('No Authorization header');

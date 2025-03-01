@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { NextFunction } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import { SETTINGS } from "./settings";
@@ -21,7 +21,10 @@ app.use(cors()) // разрешить любым фронтам делать з�
 app.use(cookieParser())
 
 
-app.use(trackAllRequestsApi) //middleware for tracking any requests and save ip,url,date
+app.use(async(req:Request, res:Response, next:NextFunction)=>{
+      console.log('check path    ',req.originalUrl);
+      next()
+}) //middleware for tracking any requests and save ip,url,date
 
 app.use(SETTINGS.PATH.blogs, blogsRouter)
 
@@ -31,7 +34,7 @@ app.use(SETTINGS.PATH.posts, postsRouter)
 
 app.use(SETTINGS.PATH.users, usersRouter)
 
-app.use(SETTINGS.PATH.authLogin, authLoginRouter)
+app.use(SETTINGS.PATH.authLogin,trackAllRequestsApi, authLoginRouter) //middleware for tracking any requests and save ip,url,date
 
 app.use(SETTINGS.PATH.comments, commentsRouter)
 

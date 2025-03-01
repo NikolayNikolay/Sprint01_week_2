@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const settings_1 = require("../settings");
 const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('inside Authorization');
     const authorizationHeader = req.headers['authorization'];
     if (!authorizationHeader) {
         console.log('No Authorization header');

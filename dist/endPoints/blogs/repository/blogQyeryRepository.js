@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.queryBlogRepository = void 0;
+exports.queryBlogRepository = exports.QueryBlogRepository = void 0;
 const mongo_db_1 = require("../../../db/mongo-db");
 const serchFilter_1 = require("../../../helpers/serchFilter");
 const queryParamsPaginations_1 = require("../../../helpers/queryParamsPaginations");
 const viewModelsMapMethod_1 = require("../../../helpers/viewModelsMapMethod");
-exports.queryBlogRepository = {
+class QueryBlogRepository {
     getAll(queryParams) {
         return __awaiter(this, void 0, void 0, function* () {
             const serchFilter = (0, serchFilter_1.filter)(queryParams);
@@ -44,7 +44,7 @@ exports.queryBlogRepository = {
                 items: blogs
             };
         });
-    },
+    }
     getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const foundBlog = yield mongo_db_1.blogCollection.findOne({ '_id': id });
@@ -53,10 +53,12 @@ exports.queryBlogRepository = {
             }
             return (0, viewModelsMapMethod_1.mapViewBlogsModel)(foundBlog);
         });
-    },
+    }
     totalBlogs(params) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield mongo_db_1.blogCollection.countDocuments(params);
         });
     }
-};
+}
+exports.QueryBlogRepository = QueryBlogRepository;
+exports.queryBlogRepository = new QueryBlogRepository();

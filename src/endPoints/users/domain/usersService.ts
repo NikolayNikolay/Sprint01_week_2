@@ -7,6 +7,7 @@ import { randomUUID } from "crypto";
 import { add } from "date-fns";
 import { ErrorMessage } from "express-validator/lib/base";
 import { errorsMessagesType } from "../../../types/errorsMessagesType";
+import { UserDbModel } from "../models/UserDbModel";
 
 export const usersService = {
    async createUser (reqBody:UserInputModel):Promise<string | errorsMessagesType>{
@@ -33,7 +34,7 @@ export const usersService = {
           }
       }
       //create Hash Password
-      const user = {
+      const user:Omit<UserDbModel, '_id'> = {
          ...reqBody,
          password: await this._createHashPassword(reqBody.password),
          createdAt: new Date().toISOString(),
@@ -45,7 +46,8 @@ export const usersService = {
             }),
             isConfirmed: true
         },
-        sessionDevice:[]
+        sessionDevice:[],
+        passwordRecovery:[]
       }
       const createUserId = await usersRepository.create(user)
       

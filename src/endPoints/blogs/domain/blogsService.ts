@@ -1,40 +1,40 @@
 import { ObjectId } from "mongodb"
 import { BlogInputModelType } from "../models/BlogInputModel"
-import { BlogViewModelType } from "../models/BlogViewModel"
-import { blogRepository } from "../repository/blogsRepository"
-import { PaginationQueryParams } from "../../../helpers/queryParamsPaginations"
+import { BlogViewModel, BlogViewModelType } from "../models/BlogViewModel"
+import { BlogRepository} from "../repository/blogsRepository"
 import { mapViewBlogsModel } from "../../../helpers/viewModelsMapMethod"
-import {  PaginationBlogsType } from "../../blogPosts/models/PaginationsBlogsPostsType"
-import { QueryParamsType } from "../../../types/queryParams"
-import { filter } from "../../../helpers/serchFilter"
+import { inject, injectable } from "inversify"
 
-export const blogsService = {
+
+@injectable()
+export class BlogsService{
+   constructor(
+      @inject(BlogRepository) 
+      public readonly blogRepository: BlogRepository){
+   }
    async create (input:BlogInputModelType ):Promise<string | null >{
-      const newBlog = {
-         ...input,
-         createdAt: new Date().toISOString(),
-         isMembership: false
-      }
-      const resultId = await blogRepository.create(newBlog)
-      console.log(resultId);
+      const newBlog = new BlogViewModel(input.name,input.description,input.websiteUrl,new Date().toISOString(),false)
+      const resultId = await this.blogRepository.create(newBlog)
       return resultId
-   },
+   }
    async getById(id:string):Promise<BlogViewModelType | boolean>{
-      const blog = await blogRepository.getById(new ObjectId(id))
+      const blog = await this.blogRepository.getById(new ObjectId(id))
       if (blog) {
          return mapViewBlogsModel(blog)
       }
       return false
-   },
+   }
    async update(input:BlogInputModelType, id:string ):Promise<boolean>{
-      const blog = await blogRepository.getById(new ObjectId(id))
+      const blog = await this.blogRepository.getById(new ObjectId(id))
       if (!blog) {
          return false
       }
-      return await blogRepository.update(input,new ObjectId(id))
+      return await this.blogRepository.update(input,new ObjectId(id))
 
-   },
+   }
    async deleteById(id:string){
-      return await blogRepository.deleteById(new ObjectId(id))
+      return await this.blogRepository.deleteById(new ObjectId(id))
    }
 }
+
+// export const blogsService = new BlogsService()

@@ -51,7 +51,7 @@ const authRefreshToken = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         return;
     }
     catch (error) {
-        console.log(error);
+        console.log('authRefrech', error);
         req.user = null;
         res.sendStatus(settings_1.httpStatusCodes.UNAUTHORIZED_401);
         return;

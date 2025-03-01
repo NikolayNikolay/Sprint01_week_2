@@ -10,8 +10,8 @@ export type DeviceViewModel = {
 export type DeviceDbModel = {
    ip:string
    device_name:string
-   device_id:string
+   deviceId:string
    user_id: string
-   iat: Date
-   exp:Date
+   iat: number
+   exp: number
 }

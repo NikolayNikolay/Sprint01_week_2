@@ -12,7 +12,7 @@ exports.jwtServise = {
         const jwtAccess = jsonwebtoken_1.default.sign({ user_id: user._id.toString() }, convertSecretForJwt, { expiresIn: '10s' });
         const jwtRefresh = jsonwebtoken_1.default.sign({ user_id: user._id.toString(), iat: Math.floor(Date.now() / 1000), ip: sessionData === null || sessionData === void 0 ? void 0 : sessionData.ip,
             device_name: sessionData === null || sessionData === void 0 ? void 0 : sessionData.device_name,
-            device_id: sessionData === null || sessionData === void 0 ? void 0 : sessionData.device_id }, convertSecretForJwt, { expiresIn: '10s' });
+            deviceId: sessionData === null || sessionData === void 0 ? void 0 : sessionData.deviceId }, convertSecretForJwt, { expiresIn: '20s' });
         return {
             accessToken: jwtAccess,
             refreshToken: jwtRefresh
@@ -27,14 +27,14 @@ exports.jwtServise = {
             return {
                 ip: result.ip ? result.ip : null,
                 device_name: result.device_name ? result.device_name : null,
-                device_id: result.device_id ? result.device_id : null,
+                deviceId: result.deviceId ? result.deviceId : null,
                 user_id: result.user_id,
                 iat: result.iat,
                 exp: result.exp,
             };
         }
         catch (error) {
-            console.log(error);
+            console.log('checkJwt', error);
             throw error;
         }
     },
